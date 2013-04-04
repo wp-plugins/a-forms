@@ -16,7 +16,7 @@ http://downloads.wordpress.org/plugin/a-forms.zip
 
 4) Activate the plugin.
 
-Version: 1.0
+Version: 1.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */

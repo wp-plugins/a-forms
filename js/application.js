@@ -71,8 +71,9 @@ jQuery(function() {
         data: {section_id: jQuery("#fields_sortable li.section-heading:last").attr("id").replace("section_id_", ""), field_order: jQuery("#fields_sortable > li.shiftable").length, action: "add_field_to_section"}
     }).success(function(data) {
       var tmp = data.split("::");
-    	jQuery("#fields_sortable li:last").attr("id", tmp[1]);
-      jQuery("#fields_sortable li input.section_id").val(tmp[0]);
+    	jQuery("#fields_sortable > li:last").attr("id", tmp[1]);
+      jQuery("#fields_sortable > li:last input.fid").val(tmp[1]);
+      jQuery("#fields_sortable > li:last input.section_id").val(tmp[0]);
       jQuery(row).find(".delete").attr("href", AFormsAjax.base_url + "&action=delete&a_form_page=section&fid="+tmp[1]+"&section_id="+tmp[0]);
       sort_fields();
     });
@@ -170,6 +171,15 @@ jQuery(function() {
   jQuery("html,body").animate({
     scrollTop: (jQuery("span.error, #sections_heading").offset().top - 100)
   }, 2000);
+
+  jQuery(document).ajaxStart(function() {
+    jQuery("#aform_save_and_continue_panel").append("<span>Working, please wait ...</span>");
+    jQuery("#aform_save_and_continue_panel input").hide();
+  });
+  jQuery(document).ajaxStop(function() {
+    jQuery("#aform_save_and_continue_panel span").remove();
+    jQuery("#aform_save_and_continue_panel input").show();
+  });
 });
 
 function make_fields_sortable_odd_and_even_rows() {
@@ -206,5 +216,6 @@ function sort_fields() {
       url: AFormsAjax.sort_field_url,
       data: {FID: jQuery(this).attr("id"), field_order: jQuery(this).index(), section_id: section_id}
     });
+    jQuery(this).find("input.section_id").val(section_id);
   });
 }

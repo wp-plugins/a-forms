@@ -29,9 +29,9 @@ final class AForm {
       
       if ($valid && $fields_valid) {
         if ($_POST["sub_action"] == "Update") {
-          $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Update Complete&action=edit&id=".$_POST["ID"]."#sections_heading";
+          $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Update Complete&action=edit&id=".$_POST["ID"]."";
         } else {
-          $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Update Complete#sections_heading";
+          $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Update Complete";
         }
         
         tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
@@ -80,7 +80,7 @@ final class AForm {
           "field_subject_id" => $from_subject_id
         ), "ID", $form_id);
 
-        $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Created#sections_heading";
+        $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Created";
         tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
         exit;
       }
@@ -92,7 +92,7 @@ final class AForm {
     tom_delete_record_by_id("a_form_forms", "ID", $_GET["id"]);
     tom_delete_record_by_id("a_form_sections", "form_id", $_GET["id"]);
     tom_delete_record_by_id("a_form_fields", "form_id", $_GET["id"]);
-    $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Deleted#sections_heading";
+    $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Deleted";
     tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
     exit;
 	}
@@ -194,7 +194,7 @@ final class AForm {
       <p class="actions"><a href='#' id="new_form_row">New Field</a></p>
     <?php } ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />
-    <p><input type="submit" name="sub_action" value="<?php echo($action); ?>" /> <?php if ($instance != null) { ?><input type="submit" name="sub_action" value="Save and Finish" /><?php } ?></p>
+    <p id="aform_save_and_continue_panel"><input type="submit" name="sub_action" value="<?php echo($action); ?>" /> <?php if ($instance != null) { ?><input type="submit" name="sub_action" value="Save and Finish" /><?php } ?></p>
     <?php
   }
 
