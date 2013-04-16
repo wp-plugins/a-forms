@@ -3,7 +3,7 @@
 	wp_register_script("a-forms", plugins_url("js/application.js", __FILE__));
   wp_enqueue_script("a-forms");
 
-  wp_register_style("a-forms", plugins_url("css/style.css", __FILE__));
+  wp_register_style("a-forms", plugins_url("admin_css/style.css", __FILE__));
   wp_enqueue_style("a-forms");
 
    wp_localize_script( 'a-forms', 'AFormsAjax', array(

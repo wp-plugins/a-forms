@@ -173,3 +173,7 @@ form #fields_sortable input.text {
 table {
 	margin: 20px 0;
 }
+
+table#tracking td, table#tracking th {
+	text-align: center;
+}
