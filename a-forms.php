@@ -184,7 +184,7 @@ function a_form_initial_page() {
     "sort_field_url" => get_option('siteurl')."/wp-admin/admin.php?page=a-forms/a-forms.php&a_form_page=section_field_sort"
   ));
 
-  wp_register_style("a-forms", plugins_url("/css/style.css", __FILE__));
+  wp_register_style("a-forms", plugins_url("/admin_css/style.css", __FILE__));
   wp_enqueue_style("a-forms");
 
   // If you don't use Securimage and Tom M8te is not setup to use Securimage, then ...
@@ -449,7 +449,7 @@ function a_form_tracking_page() {
   wp_register_script("a-forms", plugins_url("/js/application.js", __FILE__));
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script("a-forms");
-  wp_register_style("a-forms", plugins_url("/css/style.css", __FILE__));
+  wp_register_style("a-forms", plugins_url("/admin_css/style.css", __FILE__));
   wp_enqueue_style("a-forms");
 
   ?>
@@ -472,7 +472,7 @@ function a_form_tracking_page() {
       if ($total_tracks > 0) {
         tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"], "ASC", "top");
       ?>
-        <table>
+        <table id="tracking">
           <thead>
             <tr>
               <?php           
