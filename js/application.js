@@ -10,20 +10,6 @@ jQuery(function() {
     });    
   }
 
-  // if (jQuery("#sections_sortable tbody").length > 0) {
-  //   jQuery( "#sections_sortable tbody" ).sortable({
-  //     update: function( event, ui ) {
-  //       jQuery("#sections_sortable tbody tr").each(function() {
-  //         jQuery.ajax({
-  //           type: 'POST',
-  //           url: AFormsAjax.sort_section_url,
-  //           data: {ID: jQuery.trim(jQuery(this).find("td.id").html()), section_order: jQuery(this).index()}
-  //         });
-  //       });
-  //     }
-  //   });   
-  // }
-
   jQuery(document).delegate(".delete-option", "click", function() {
     jQuery(this).parent().addClass("deleted");
     new_options = [];
@@ -49,7 +35,7 @@ jQuery(function() {
   });
 
   jQuery(document).delegate(".add.value-option", "click", function() {
-    jQuery(this).parent().parent().find(".value-option-controls ul").append(create_option_value_row("", ""));
+    jQuery(this).parent().parent().find("ul").append(create_option_value_row("", ""));
     return false;
   });
 
@@ -128,6 +114,8 @@ jQuery(function() {
   jQuery("#fields_sortable li").each(function() {
     if (optional_fields.indexOf(jQuery(this).find(".field-type").val()) < 0) {
       jQuery(this).find(".value-option-controls").hide();
+    } else {
+      jQuery(this).find(".value-option-controls").show();
     }
   });
 
@@ -160,7 +148,7 @@ jQuery(function() {
   jQuery("table tr:odd").addClass("odd");
   jQuery("table tr:even").addClass("even");
 
-  jQuery("td.tracking-enabled").each(function() {
+  jQuery("td.tracking-enabled, td.include-admin-in-emails").each(function() {
     if (jQuery.trim(jQuery(this).html()) == "1") {
       jQuery(this).html("Yes");
     } else {
@@ -168,9 +156,13 @@ jQuery(function() {
     }
   });
 
-  jQuery("html,body").animate({
-    scrollTop: (jQuery("span.error, #sections_heading").offset().top - 100)
-  }, 2000);
+  try{
+    jQuery("html,body").animate({
+      scrollTop: (jQuery("span.error").offset().top - 100)
+    }, 2000);
+  } catch(e) {
+    // Ignore errors.
+  }
 
   jQuery(document).ajaxStart(function() {
     jQuery("#aform_save_and_continue_panel").append("<span>Working, please wait ...</span>");
@@ -189,7 +181,7 @@ function make_fields_sortable_odd_and_even_rows() {
 }
 
 function create_option_value_row(key_value, value_value) {
-  return "<li><input type='text' name='key' value='"+key_value+"'/><span class='colon'>:</span><input type='text' name='value' value='"+value_value+"'/> <a href='#' class='delete-option'>Remove</a></li>";
+  return "<li><input type='text' name='key' class='text' value='"+key_value+"'/><span class='colon'>:</span><input type='text' name='value' class='text' value='"+value_value+"'/> <a href='#' class='delete-option'>Remove</a></li>";
 }
 
 function sort_fields() {

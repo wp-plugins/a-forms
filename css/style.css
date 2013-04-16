@@ -1,11 +1,28 @@
+.a-form div.postbox {
+	float: left;
+	width: 1110px;
+}
+
+#setting_column, #form_column, li.shiftable {
+	float: left;
+	width: 330px;
+}
+
+#form_column {
+	width: 620px;
+}
+
+form {
+	width: 1035px;
+}
+
 td.shiftable, li.shiftable {
 	padding-bottom: 10px;
 	padding-left: 10px;
 }
 
 li.shiftable {
-	float: left;
-	width: 1200px;
+	width: 740px;
 }
 
 li.shiftable h3 {
@@ -31,14 +48,14 @@ li.shiftable span.colon {
 
 li.shiftable div.value-option-controls, li.shiftable div.file-ext-controls {
 	display: none;
-	width: 370px;
+	width: 205px;
 	margin-bottom: 40px;
 }
 
 li.shiftable div.value-option-controls strong {
 	float: left;
 	display: block;
-	width: 135px;
+	width: 57px;
 	margin-left: 3px;
 }
 li.shiftable div.value-option-controls strong.label {
@@ -104,6 +121,10 @@ form span.error {
 	margin-left: 142px;
 }
 
+form #form_column span.error {
+	margin-left: 77px;
+}
+
 form li.shiftable span.error {
 	float: none;
 }
@@ -130,8 +151,19 @@ form input.text, form textarea {
 	width: 210px;
 }
 
+form #setting_column input.text, form #setting_column textarea {
+	width: 160px;
+}
+
 form textarea {
 	height: 200px;
+}
+
+form #fields_sortable label {
+	width: 66px;
+}
+form #fields_sortable input.text {
+	width: 60px;
 }
 
 .pagination, .pagination li {

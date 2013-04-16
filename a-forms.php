@@ -16,7 +16,7 @@ http://downloads.wordpress.org/plugin/a-forms.zip
 
 4) Activate the plugin.
 
-Version: 1.1
+Version: 1.2
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -55,6 +55,9 @@ function a_forms_activate() {
     PRIMARY KEY  (ID),
     UNIQUE (form_name)
   )";
+  $wpdb->query($sql); 
+
+  $sql = "ALTER TABLE $a_form_forms_table ADD include_admin_in_emails VARCHAR(1)";
   $wpdb->query($sql); 
 
   $a_form_sections_table = $wpdb->prefix . "a_form_sections";
@@ -111,17 +114,18 @@ register_activation_hook( __FILE__, 'a_forms_activate' );
 //call register settings function
 add_action( 'admin_init', 'register_a_forms_settings' );
 function register_a_forms_settings() {
+  register_setting( 'a-forms-settings-group', 'a_forms_admin_email' );
   register_setting( 'a-forms-settings-group', 'a_forms_mail_host' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_auth' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_port' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
 
-  @check_a_forms_dependencies_are_active(
-    "A Forms", 
-    array(
-      "Tom M8te" => array("plugin"=>"tom-m8te/tom-m8te.php", "url" => "http://downloads.wordpress.org/plugin/tom-m8te.zip", "version" => "1.3.4"))
-  );
+  $msg_content = "<div class='updated'><p>Sorry for the confusion but you must install and activate Tom M8te before you can use A Forms. Please go to Plugins/Add New and search/install the following plugin: Tom M8te </p></div>";
+  if (!is_plugin_active("tom-m8te/tom-m8te.php")) {
+    deactivate_plugins(__FILE__, true);
+    echo($msg_content);
+  } 
 }
 
 add_action('admin_menu', 'register_a_forms_page');
@@ -135,7 +139,7 @@ function register_a_forms_page() {
 add_action('wp_ajax_aform_css_file_selector', 'aform_css_file_selector');
 function aform_css_file_selector() {
   update_option("aform_current_css_file", $_POST["css_file_selection"]);
-  echo(@file_get_contents(AFormsPath::normalize(dirname(__FILE__)."../../../themes/".str_replace(" ", "", strtolower(get_current_theme()))."/aforms_css/".$_POST["css_file_selection"])));
+  echo(@file_get_contents(get_template_directory()."/aforms_css/".$_POST["css_file_selection"]));
   die();  
 }
 
@@ -182,6 +186,12 @@ function a_form_initial_page() {
 
   wp_register_style("a-forms", plugins_url("/css/style.css", __FILE__));
   wp_enqueue_style("a-forms");
+
+  // If you don't use Securimage and Tom M8te is not setup to use Securimage, then ...
+  if (get_option("include_securimage") != "1" && !class_exists("Securimage")) {
+    // Make Tom M8te use Securimage.
+    update_option("include_securimage", "1");
+  } 
 
   if (tom_get_query_string_value("a_form_page") == "fields") {
     if ($_GET["action"] == "delete") {
@@ -233,59 +243,65 @@ function a_form_page() {
     if ($_GET["action"] == "edit") {
       // Display Edit Page
       $a_form = tom_get_row_by_id("a_form_forms", "*", "ID", $_GET["id"]); ?>
-      <div class="postbox " style="display: block; ">
-      <div class="inside">
-        <form action="" method="post">
-          <?php AForm::render_admin_a_form_forms_form($a_form, "Update"); ?>
-        </form>
-      </div>
-      </div>
-      </div>
+
+        <div class="postbox " style="display: block; ">
+        <div class="inside">
+          <form action="" method="post">
+            <?php AForm::render_admin_a_form_forms_form($a_form, "Update"); ?>
+          </form>
+        </div>
+        </div>
+
+    
     <?php }
 
     if ($_GET["action"] == "new") {
       // Display New Page
       ?>
-      <div class="postbox " style="display: block; ">
-      <div class="inside">
-        <form action="" method="post">
-          <?php 
 
-          if (!isset($_POST["to_email"])) {
-            $_POST["to_email"] = get_option("admin_email");
-          }
-          if (!isset($_POST["show_section_names"])) {
-            $_POST["show_section_names"] = "1";
-          }
-          if (!isset($_POST["tracking_enabled"])) {
-            $_POST["tracking_enabled"] = "1";
-          }
+        <div class="postbox " style="display: block; ">
+        <div class="inside">
+          <form action="" method="post">
+            <?php 
 
-          AForm::render_admin_a_form_forms_form(null, "Create"); ?>
-        </form>
-      </div>
-      </div>
-      </div>
+            if (!isset($_POST["to_email"])) {
+              $_POST["to_email"] = get_option("admin_email");
+            }
+            if (!isset($_POST["show_section_names"])) {
+              $_POST["show_section_names"] = "1";
+            }
+            if (!isset($_POST["tracking_enabled"])) {
+              $_POST["tracking_enabled"] = "1";
+            }
+
+            AForm::render_admin_a_form_forms_form(null, "Create"); ?>
+          </form>
+        </div>
+        </div>
     <?php }
 
   } else { ?>
-    <div class="postbox " style="display: block; ">
-    <div class="inside">
-      <?php
 
-      $forms = tom_get_results("a_form_forms", "*", "");
-      if (count($forms) == 0) {
-        $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
-        tom_javascript_redirect_to($url, "<p>Start by creating a form.</p>");
-      } else {
-        tom_generate_datatable("a_form_forms", array("ID", "form_name", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   
-      }
-      ?>
-    </div>
-    </div>
-    </div>
-  <?php
+
+      <div class="postbox " style="display: block; ">
+      <div class="inside">
+        <?php
+
+        $forms = tom_get_results("a_form_forms", "*", "");
+        if (count($forms) == 0) {
+          $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
+          tom_javascript_redirect_to($url, "<p>Start by creating a form.</p>");
+        } else {
+          tom_generate_datatable("a_form_forms", array("ID", "form_name", "include_admin_in_emails", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   
+        }
+        ?>
+      </div>
+      </div>
+    <?php
   }
+  ?>
+  </div>
+  <?php
 }
 
 function a_form_section_page() {
@@ -348,6 +364,21 @@ function a_form_settings_page() { ?>
   <div class="inside">
   <form method="post" action="options.php">
     <?php settings_fields( 'a-forms-settings-group' ); ?>
+    <h3>Admin Settings</h3>
+    <table class="form-table">
+      <tbody>
+        <tr valign="top">
+          <th scope="row">
+            <label for="a_forms_admin_email">Admin Email:</label>
+          </th>
+          <td>
+            <input type="text" id="a_forms_admin_email" name="a_forms_admin_email" value="<?php echo get_option('a_forms_admin_email'); ?>" />
+            <span class="example">e.g: admin@yourcompany.com.au</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
     <h3>SMTP Settings</h3>
     <table class="form-table">
       <tbody>
@@ -435,7 +466,7 @@ function a_form_tracking_page() {
         $page_no = $_GET["a_form_tracks_page"];
       }
       $offset = $page_no * $limit_clause;
-      $tracks = tom_get_results("a_form_tracks", "*", "form_id=".$_GET["id"], array(), "$limit_clause OFFSET $offset");
+      $tracks = tom_get_results("a_form_tracks", "*", "form_id=".$_GET["id"], array("created_at DESC"), "$limit_clause OFFSET $offset");
       $fields = tom_get_results("a_form_fields", "*", "form_id=".$_GET["id"], array());
       
       if ($total_tracks > 0) {
@@ -450,11 +481,14 @@ function a_form_tracking_page() {
                 }
               ?>
               <th>Referrer URL</th>
+              <th>Date Sent</th>
+              <th>View Form</th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($tracks as $track) {
-              $fields_array = unserialize($track->fields_array);
+              $fields_array = unserialize($track->fields_array); 
+              $query_string = "";
               echo("<tr>");
               foreach ($fields as $field) {
                 $content = $fields_array[str_replace(" ", "_", strtolower($field->field_label))];
@@ -465,8 +499,12 @@ function a_form_tracking_page() {
                   echo(preg_replace("/, $/", "", $content));
                 }
                 echo("</td>");
+                $query_string .= "a_form_".str_replace(" ", "_", strtolower($field->field_label))."=".$content."&";
               }
+
               echo("<td>".$track->referrer_url."</td>");
+              echo("<td>".gmdate("Y-m-d H:i:s", strtotime($track->created_at ))." GMT</td>");
+              echo("<td><a target='_blank' href='".$track->referrer_url."?".$query_string."'>View</a></td>");
               echo("</tr>");
             }?>
           </tbody>
@@ -600,7 +638,6 @@ function a_form_shortcode($atts) {
           }
         }
 
-
         // Send Email.
         $cc_emails = $form->to_cc_email;
         if ($from_email != "" && $form->send_confirmation_email) {
@@ -618,7 +655,7 @@ function a_form_shortcode($atts) {
           array_push($smtp_attachment_urls, $temp[1]);
         }
 
-        $mail_message = tom_send_email(false, $form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"));        
+        $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"));        
         
         if ($mail_message == "<div class='success'>Message sent!</div>") {
 
@@ -649,7 +686,7 @@ function a_form_shortcode($atts) {
   }
   
   $return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form' enctype='multipart/form-data'>";
-  
+  $return_content .= "<fieldset>";
   // Get next section
   if ($_POST["action"] == "Next") {
     if ($form_valid) {
@@ -699,7 +736,7 @@ function a_form_shortcode($atts) {
 
   // Render form fields.
   if ($form->show_section_names) {
-    $return_content .= "<h2>".$section->section_name."</h2>";
+    $return_content .= "<legend>".$section->section_name."</legend>";
   }
 
   foreach ($fields as $field) {
@@ -742,7 +779,7 @@ function a_form_shortcode($atts) {
     ob_end_clean();
   }
   
-  $return_content .= "<fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
+  $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
 
   // Add action buttons
   // Check if more then one section
@@ -790,45 +827,9 @@ function add_a_forms_js_and_css() {
   wp_register_script("a-forms", plugins_url("/js/application.js", __FILE__));
   wp_enqueue_script("a-forms");
 
-  wp_register_style("a-forms", get_option("siteurl")."/wp-content/themes/".str_replace(" ", "", strtolower(get_current_theme())).'/aforms_css/'.get_option("aform_current_css_file"));
+  wp_register_style("a-forms", get_template_directory_uri().'/aforms_css/'.get_option("aform_current_css_file"));
   wp_enqueue_style("a-forms");
 } 
-
-function check_a_forms_dependencies_are_active($plugin_name, $dependencies) {
-  $msg_content = "<div class='updated'><p>Sorry for the confusion but you must install and activate ";
-  $plugins_array = array();
-  $upgrades_array = array();
-  define('PLUGINPATH', ABSPATH.'wp-content/plugins');
-  foreach ($dependencies as $key => $value) {
-    $plugin = get_plugin_data(PLUGINPATH."/".$value["plugin"],true,true);
-    $url = $value["url"];
-    if (!is_plugin_active($value["plugin"])) {
-      array_push($plugins_array, $key);
-    } else {
-      if (isset($value["version"]) && str_replace(".", "", $plugin["Version"]) < str_replace(".", "", $value["version"])) {
-        array_push($upgrades_array, $key);
-      }
-    }
-  }
-  $msg_content .= implode(", ", $plugins_array) . " before you can use $plugin_name. Please go to Plugins/Add New and search/install the following plugin(s): ";
-  $download_plugins_array = array();
-  foreach ($dependencies as $key => $value) {
-    if (!is_plugin_active($value["plugin"])) {
-      $url = $value["url"];
-      array_push($download_plugins_array, $key);
-    }
-  }
-  $msg_content .= implode(", ", $download_plugins_array)."</p></div>";
-  if (count($plugins_array) > 0) {
-    deactivate_plugins( __FILE__, true);
-    echo($msg_content);
-  } 
-
-  if (count($upgrades_array) > 0) {
-    deactivate_plugins( __FILE__,true);
-    echo "<div class='updated'><p>$plugin_name requires the following plugins to be updated: ".implode(", ", $upgrades_array).".</p></div>";
-  }
-}
 
 // Copy directory to another location.
 function aform_copy_directory($src,$dst) { 

@@ -4,7 +4,7 @@ final class AForm {
   public static function array_validation_rules() {
     return array(
       "form_name" => "required", 
-      "to_email" => "required multi-emails", 
+      "to_email" => "multi-emails", 
       "to_cc_email" => "multi-emails", 
       "to_bcc_email" => "multi-emails", 
       "subject" => "required"
@@ -20,9 +20,14 @@ final class AForm {
     } 
     $form_valid = tom_validate_form(AForm::array_validation_rules());
 
+    $to_email_valid = true;
+    if ($_POST["include_admin_in_emails"] != '1') {
+      $to_email_valid = tom_validate_value("required", $_POST["to_email"], "to_email_error");
+    }
+
     $fields_valid = AFormFields::update();
 
-		if ($send_confirmation_email_valid && $form_valid && $fields_valid) {
+		if ($send_confirmation_email_valid && $to_email_valid && $form_valid && $fields_valid) {
 
       $valid = tom_update_record_by_id("a_form_forms", 
       tom_get_form_query_strings("a_form_forms", array("created_at", "updated_at"), array("updated_at" => gmdate( 'Y-m-d H:i:s'))), "ID", $_POST["ID"]);
@@ -98,18 +103,20 @@ final class AForm {
 	}
 
 	public static function render_admin_a_form_forms_form($instance, $action) { ?>
+    <div id="setting_column">
 	  <?php
 		  tom_add_form_field($instance, "hidden", "ID *", "ID", "ID", array(), "span", array("class" => "hidden"));
 		  tom_add_form_field($instance, "text", "Name *", "form_name", "form_name", array("class" => "text"), "p", array());
-		  
-		  if ($instance != null && $instance->to_email == "") {
-		  	$_POST["to_email"] = get_option("admin_email");
-		  }
 
-		  tom_add_form_field($instance, "text", "Send Emails To *", "to_email", "to_email", array("class" => "text"), "p", array());
+		  if (get_option("a_forms_admin_email") != "") {
+        tom_add_form_field($instance, "checkbox", "Send Emails To", "include_admin_in_emails", "include_admin_in_emails", array(), "p", array(), array("1" => "Admin User"));
+      }
+      tom_add_form_field($instance, "text", "Send Emails To *", "to_email", "to_email", array("class" => "text"), "p", array());
       tom_add_form_field($instance, "text", "CC Emails To", "to_cc_email", "to_cc_email", array("class" => "text"), "p", array());
       tom_add_form_field($instance, "text", "BCC Emails To", "to_bcc_email", "to_bcc_email", array("class" => "text"), "p", array());
+      
       tom_add_form_field($instance, "text", "Email Subject *", "subject", "subject", array("class" => "text"), "p", array());
+      
       if ($instance != null) {
         $field_options = array("" => "");
         $fields = tom_get_results("a_form_fields", "*", "form_id=".$instance->ID);
@@ -136,14 +143,17 @@ final class AForm {
 	  ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />
 	  <p><input type="submit" name="sub_action" value="<?php echo($action); ?>" /> <?php if ($instance != null) { ?><input type="submit" name="sub_action" value="Save and Finish" /><?php } ?></p>
-
+    </div>
+    <div id="form_column">
 	  <?php if ($action == "Update") { ?>
 	    <h2 id="sections_heading">Sections <a class="add-new-h2" href="<?php echo(get_option('siteurl')); ?>/wp-admin/admin.php?page=a-forms/a-forms.php&action=new&a_form_page=section&form_id=<?php echo($instance->ID); ?>">Add New</a></h2>
-      <?php AForm::render_admin_a_form_fields_form($instance, $action);
-    }
+      <?php AForm::render_admin_a_form_fields_form($instance, $action); ?>
+    <?php } ?>
+    </div>
+    <?php
 	}
 
-  public static function render_admin_a_form_fields_form($instance, $action) { 
+  public static function render_admin_a_form_fields_form($instance, $action) {
     if ($instance != null) { ?>
       <h2><?php echo $instance->form_name; ?></h2>
     <?php } ?>
@@ -158,12 +168,6 @@ final class AForm {
         ?>
       </li>
     </ul>
-
-    <?php
-    if (isset($_GET["message"]) && $_GET["message"] != "") {
-      echo("<div class='updated below-h2'><p>".$_GET["message"]."</p></div>");
-    }
-    ?>
     
     <p>Use shortcode [a-form id="<?php echo($instance->ID); ?>"][/a-form] in your page/post to use the form.</p>
     <ul id="fields_sortable">
@@ -195,6 +199,7 @@ final class AForm {
     <?php } ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />
     <p id="aform_save_and_continue_panel"><input type="submit" name="sub_action" value="<?php echo($action); ?>" /> <?php if ($instance != null) { ?><input type="submit" name="sub_action" value="Save and Finish" /><?php } ?></p>
+
     <?php
   }
 

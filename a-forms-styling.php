@@ -10,11 +10,13 @@
     'ajax_url' => admin_url('admin-ajax.php')
    ));
 
-	$css_content = @file_get_contents(AFormsPath::normalize(dirname(__FILE__)."../../../themes/".str_replace(" ", "", strtolower(get_current_theme()))."/aforms_css/".get_option("aform_current_css_file")));
+	$css_content = file_get_contents(get_template_directory_uri()."/aforms_css/".get_option("aform_current_css_file"));
 	if (isset($_POST["css_content"])) {
-		$location = AFormsPath::normalize(dirname(__FILE__)."../../../themes/".str_replace(" ", "", strtolower(get_current_theme()))."/aforms_css/".get_option("aform_current_css_file"));
+		$location = get_template_directory()."/aforms_css/".get_option("aform_current_css_file");
 		$css_content = $_POST["css_content"];
-		tom_write_to_file($_POST["css_content"], $location);
+		$css_content = str_replace('\"', "\"", $css_content);
+		$css_content = str_replace("\'", '\'', $css_content);
+		tom_write_to_file($css_content, $location);
 	}
 ?>
 <div class="wrap a-form">
@@ -26,7 +28,7 @@
   		<label for="css_file_selection">Select CSS File</label>
   		<select id="css_file_selection" name="css_file_selection">
   			<?php
-  			if ($handle = opendir(AFormsPath::normalize(dirname(__FILE__)."../../../themes/".str_replace(" ", "", strtolower(get_current_theme()))."/aforms_css"))) {
+  			if ($handle = opendir(get_template_directory()."/aforms_css")) {
 			    /* This is the correct way to loop over the directory. */
 			    while (false !== ($entry = readdir($handle))) {
 			        if (preg_match("/\.css$/", $entry)) {
