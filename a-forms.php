@@ -16,7 +16,7 @@ http://downloads.wordpress.org/plugin/a-forms.zip
 
 4) Activate the plugin.
 
-Version: 1.2
+Version: 1.2.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -33,81 +33,90 @@ function a_forms_activate() {
   global $wpdb;
 
   $a_form_forms_table = $wpdb->prefix . "a_form_forms";
-  $sql = "CREATE TABLE $a_form_forms_table (
-    ID mediumint(9) NOT NULL AUTO_INCREMENT, 
-    form_name VARCHAR(255) DEFAULT '',
-    to_email VARCHAR(255) DEFAULT '',
-    to_cc_email VARCHAR(255) DEFAULT '',
-    to_bcc_email VARCHAR(255) DEFAULT '',
-    subject VARCHAR(255) DEFAULT '',
-    show_section_names tinyint(4) NOT NULL DEFAULT 1,
-    field_name_id mediumint(9), 
-    field_email_id mediumint(9), 
-    field_subject_id mediumint(9), 
-    send_confirmation_email tinyint(4) NOT NULL DEFAULT 0,
-    confirmation_from_email VARCHAR(255) DEFAULT '',
-    success_message longtext DEFAULT '',
-    success_redirect_url VARCHAR(255) DEFAULT '',
-    include_captcha tinyint(4) NOT NULL DEFAULT 0,
-    tracking_enabled tinyint(4) NOT NULL DEFAULT 1,
-    created_at DATETIME,
-    updated_at DATETIME,
-    PRIMARY KEY  (ID),
-    UNIQUE (form_name)
-  )";
-  $wpdb->query($sql); 
+  $checktable = $wpdb->query("SHOW TABLES LIKE '$a_form_forms_table'");
+  if ($checktable == 0) {
 
-  $sql = "ALTER TABLE $a_form_forms_table ADD include_admin_in_emails VARCHAR(1)";
-  $wpdb->query($sql); 
+    $sql = "CREATE TABLE $a_form_forms_table (
+      ID mediumint(9) NOT NULL AUTO_INCREMENT, 
+      form_name VARCHAR(255) DEFAULT '',
+      to_email VARCHAR(255) DEFAULT '',
+      to_cc_email VARCHAR(255) DEFAULT '',
+      to_bcc_email VARCHAR(255) DEFAULT '',
+      subject VARCHAR(255) DEFAULT '',
+      show_section_names tinyint(4) NOT NULL DEFAULT 1,
+      field_name_id mediumint(9), 
+      field_email_id mediumint(9), 
+      field_subject_id mediumint(9), 
+      send_confirmation_email tinyint(4) NOT NULL DEFAULT 0,
+      confirmation_from_email VARCHAR(255) DEFAULT '',
+      success_message longtext DEFAULT '',
+      success_redirect_url VARCHAR(255) DEFAULT '',
+      include_captcha tinyint(4) NOT NULL DEFAULT 0,
+      tracking_enabled tinyint(4) NOT NULL DEFAULT 1,
+      created_at DATETIME,
+      updated_at DATETIME,
+      PRIMARY KEY  (ID),
+      UNIQUE (form_name)
+    )";
+    $wpdb->query($sql); 
 
-  $a_form_sections_table = $wpdb->prefix . "a_form_sections";
-  $sql = "CREATE TABLE $a_form_sections_table (
-    ID mediumint(9) NOT NULL AUTO_INCREMENT, 
-    section_name VARCHAR(255) DEFAULT '',
-    section_order mediumint(9) NOT NULL DEFAULT 0, 
-    form_id mediumint(9) NOT NULL, 
-    created_at DATETIME,
-    updated_at DATETIME,
-    PRIMARY KEY  (ID)
-  )";
-  $wpdb->query($sql); 
+    $a_form_sections_table = $wpdb->prefix . "a_form_sections";
+    $sql = "CREATE TABLE $a_form_sections_table (
+      ID mediumint(9) NOT NULL AUTO_INCREMENT, 
+      section_name VARCHAR(255) DEFAULT '',
+      section_order mediumint(9) NOT NULL DEFAULT 0, 
+      form_id mediumint(9) NOT NULL, 
+      created_at DATETIME,
+      updated_at DATETIME,
+      PRIMARY KEY  (ID)
+    )";
+    $wpdb->query($sql); 
 
-  $a_form_fields_table = $wpdb->prefix . "a_form_fields";
-  $sql = "CREATE TABLE $a_form_fields_table (
-    FID mediumint(9) NOT NULL AUTO_INCREMENT, 
-    field_type VARCHAR(255) DEFAULT '',
-    field_label VARCHAR(255) DEFAULT '', 
-    value_options VARCHAR(255) DEFAULT '',
-    field_order mediumint(9) NOT NULL DEFAULT 0, 
-    validation VARCHAR(255) DEFAULT '',
-    file_ext_allowed VARCHAR(255) DEFAULT '',
-    form_id mediumint(9) NOT NULL,
-    section_id mediumint(9) NOT NULL,
-    created_at DATETIME,
-    updated_at DATETIME,
-    PRIMARY KEY  (FID)
-  )";
-  $wpdb->query($sql);
+    $a_form_fields_table = $wpdb->prefix . "a_form_fields";
+    $sql = "CREATE TABLE $a_form_fields_table (
+      FID mediumint(9) NOT NULL AUTO_INCREMENT, 
+      field_type VARCHAR(255) DEFAULT '',
+      field_label VARCHAR(255) DEFAULT '', 
+      value_options VARCHAR(255) DEFAULT '',
+      field_order mediumint(9) NOT NULL DEFAULT 0, 
+      validation VARCHAR(255) DEFAULT '',
+      file_ext_allowed VARCHAR(255) DEFAULT '',
+      form_id mediumint(9) NOT NULL,
+      section_id mediumint(9) NOT NULL,
+      created_at DATETIME,
+      updated_at DATETIME,
+      PRIMARY KEY  (FID)
+    )";
+    $wpdb->query($sql);
 
-  $a_form_tracks_table = $wpdb->prefix . "a_form_tracks";
-  $sql = "CREATE TABLE $a_form_tracks_table (
-    ID mediumint(9) NOT NULL AUTO_INCREMENT, 
-    content longtext NOT NULL,
-    track_type VARCHAR(255) DEFAULT '',
-    form_id mediumint(9) NOT NULL,
-    referrer_url VARCHAR(255) DEFAULT '',
-    fields_array mediumtext DEFAULT '',
-    created_at DATETIME,
-    updated_at DATETIME,
-    PRIMARY KEY  (ID)
-  )";
-  $wpdb->query($sql);
+    $a_form_tracks_table = $wpdb->prefix . "a_form_tracks";
+    $sql = "CREATE TABLE $a_form_tracks_table (
+      ID mediumint(9) NOT NULL AUTO_INCREMENT, 
+      content longtext NOT NULL,
+      track_type VARCHAR(255) DEFAULT '',
+      form_id mediumint(9) NOT NULL,
+      referrer_url VARCHAR(255) DEFAULT '',
+      fields_array mediumtext DEFAULT '',
+      created_at DATETIME,
+      updated_at DATETIME,
+      PRIMARY KEY  (ID)
+    )";
+    $wpdb->query($sql);
+
+  }
+
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'include_admin_in_emails'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD include_admin_in_emails VARCHAR(1)";
+    $wpdb->query($sql); 
+  }
 
   if (!is_dir(get_template_directory()."/aforms_css")) {
     aform_copy_directory(AFormsPath::normalize(dirname(__FILE__)."/css"), get_template_directory());  
   } else {
     add_option("aform_current_css_file", "default.css");
   }
+
 }
 register_activation_hook( __FILE__, 'a_forms_activate' );
 
