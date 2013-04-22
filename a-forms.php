@@ -8,15 +8,19 @@ Installation:
 
 1) Install WordPress 3.5.2 or higher
 
-2) Download the following file:
+2) Download the latest from:
 
-http://downloads.wordpress.org/plugin/a-forms.zip
+http://wordpress.org/extend/plugins/tom-m8te 
+
+http://wordpress.org/extend/plugins/jquery-ui-theme 
+
+http://wordpress.org/extend/plugins/a-forms
 
 3) Login to WordPress admin, click on Plugins / Add New / Upload, then upload the zip file you just downloaded.
 
 4) Activate the plugin.
 
-Version: 1.2.1
+Version: 1.2.2
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -27,7 +31,7 @@ require_once("a-form-fields.php");
 require_once("a-forms-path.php");
 include_once (dirname (__FILE__) . '/tinymce/tinymce.php'); 
 
-define(__DEFAULT_LIMIT__, "10");
+define(__AFORMS_DEFAULT_LIMIT__, "10");
 
 function a_forms_activate() {
   global $wpdb;
@@ -135,6 +139,13 @@ function register_a_forms_settings() {
     deactivate_plugins(__FILE__, true);
     echo($msg_content);
   } 
+
+  @check_a_forms_dependencies_are_active(
+    "A Forms", 
+    array(
+      "Tom M8te" => array("plugin"=>"tom-m8te/tom-m8te.php", "url" => "http://downloads.wordpress.org/plugin/tom-m8te.zip", "version" => "1.4.3"),
+      "JQuery UI Theme" => array("plugin"=>"jquery-ui-theme/jquery-ui-theme.php", "url" => "http://downloads.wordpress.org/plugin/jquery-ui-theme.zip"))
+  );
 }
 
 add_action('admin_menu', 'register_a_forms_page');
@@ -301,7 +312,7 @@ function a_form_page() {
           $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
           tom_javascript_redirect_to($url, "<p>Start by creating a form.</p>");
         } else {
-          tom_generate_datatable("a_form_forms", array("ID", "form_name", "include_admin_in_emails", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   
+          tom_generate_datatable("a_form_forms", array("ID", "form_name", "include_admin_in_emails", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __AFORMS_DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   
         }
         ?>
       </div>
@@ -455,35 +466,77 @@ function a_form_settings_page() { ?>
 
 function a_form_tracking_page() { 
   wp_enqueue_script('jquery');
+  wp_enqueue_script('jquery-ui-datepicker');
   wp_register_script("a-forms", plugins_url("/js/application.js", __FILE__));
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script("a-forms");
   wp_register_style("a-forms", plugins_url("/admin_css/style.css", __FILE__));
   wp_enqueue_style("a-forms");
 
+  wp_enqueue_style("jquery-ui-core");
+  wp_enqueue_style("jquery-ui");
+  wp_enqueue_style("jquery-ui-datepicker");
   ?>
+
+      <script language="javascript">
+      jQuery(function() {
+        jQuery('.datepicker').datepicker({
+          dateFormat : 'yy-m-d',
+          showOn: "button",
+          buttonImage: "<?php echo(plugins_url( '/images/calendar.gif', __FILE__ )); ?>",
+          buttonImageOnly: true
+        });
+
+      });
+
+    </script>
+
   <div class="wrap">
   <h2>Tracking</h2>
+  <?php if (tom_get_query_string_value("id") != "") { ?>
+    <form action="" method="post">
+      <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
+      <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
+      <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
+      <p><input type="submit" name="action" value="Search" /></p>
+    </form>
+  <?php } ?>
   <?php 
     if (!isset($_GET["action"])) {
       tom_generate_datatable("a_form_forms", array("ID", "form_name"), "ID", "", array(), "30", "?page=a-forms/a-forms-tracking.php", true, false, false, false, true, "Y-m-d", array()); 
     } else if ($_GET["action"] == "show") {
       $limit_clause = "10";
-      $total_tracks = count(tom_get_results("a_form_tracks", "*", "form_id=".$_GET["id"], array(), ""));
+      
       $page_no = 0;
       if (isset($_GET["a_form_tracks_page"])) {
         $page_no = $_GET["a_form_tracks_page"];
       }
       $offset = $page_no * $limit_clause;
-      $tracks = tom_get_results("a_form_tracks", "*", "form_id=".$_GET["id"], array("created_at DESC"), "$limit_clause OFFSET $offset");
+      $where_sql = "form_id=".$_GET["id"];
+      if (tom_get_query_string_value("search_text") != "") {
+        $where_sql .= " AND content LIKE '%".$_POST["search_text"]."%'";
+      }
+
+      if ((tom_get_query_string_value("search_date_from") != null) && (tom_get_query_string_value("search_date_to") != null)) {
+        $where_sql .= " AND (created_at BETWEEN '".tom_get_query_string_value("search_date_from")." 00:00:00' AND '".tom_get_query_string_value("search_date_to")." 23:59:59')";
+      } else if (tom_get_query_string_value("search_date_from") != null) {
+        $where_sql .= " AND created_at > '".tom_get_query_string_value("search_date_from")." 00:00:00'";
+      } else if (tom_get_query_string_value("search_date_to") != null) {
+        $where_sql .= " AND created_at < '".tom_get_query_string_value("search_date_to")." 23:59:59'";
+      }
+
+      $tracks = tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC"), "$limit_clause OFFSET $offset");
       $fields = tom_get_results("a_form_fields", "*", "form_id=".$_GET["id"], array());
       
+      $total_tracks = count(tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC")));
+
       if ($total_tracks > 0) {
-        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"], "ASC", "top");
+        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"]."&search_text=".tom_get_query_string_value("search_text")."&search_date_from=".tom_get_query_string_value("search_date_from")."&search_date_to=".tom_get_query_string_value("search_date_to"), "ASC", "top");
       ?>
         <table id="tracking">
           <thead>
             <tr>
+              <td>ID</td>
               <?php           
                 foreach ($fields as $field) {
                   echo("<th>".$field->field_label."</th>");
@@ -498,7 +551,7 @@ function a_form_tracking_page() {
             <?php foreach ($tracks as $track) {
               $fields_array = unserialize($track->fields_array); 
               $query_string = "";
-              echo("<tr>");
+              echo("<tr><td>".$track->ID."</td>");
               foreach ($fields as $field) {
                 $content = $fields_array[str_replace(" ", "_", strtolower($field->field_label))];
                 echo("<td>");
@@ -859,6 +912,42 @@ function aform_copy_directory($src,$dst) {
         return false;
     }
     return true;
+}
+
+function check_a_forms_dependencies_are_active($plugin_name, $dependencies) {
+  $msg_content = "<div class='updated'><p>Sorry for the confusion but you must install and activate ";
+  $plugins_array = array();
+  $upgrades_array = array();
+  define('PLUGINPATH', ABSPATH.'wp-content/plugins');
+  foreach ($dependencies as $key => $value) {
+    $plugin = get_plugin_data(PLUGINPATH."/".$value["plugin"],true,true);
+    $url = $value["url"];
+    if (!is_plugin_active($value["plugin"])) {
+      array_push($plugins_array, $key);
+    } else {
+      if (isset($value["version"]) && str_replace(".", "", $plugin["Version"]) < str_replace(".", "", $value["version"])) {
+        array_push($upgrades_array, $key);
+      }
+    }
+  }
+  $msg_content .= implode(", ", $plugins_array) . " before you can use $plugin_name. Please go to Plugins/Add New and search/install the following plugin(s): ";
+  $download_plugins_array = array();
+  foreach ($dependencies as $key => $value) {
+    if (!is_plugin_active($value["plugin"])) {
+      $url = $value["url"];
+      array_push($download_plugins_array, $key);
+    }
+  }
+  $msg_content .= implode(", ", $download_plugins_array)."</p></div>";
+  if (count($plugins_array) > 0) {
+    deactivate_plugins( __FILE__, true);
+    echo($msg_content);
+  } 
+
+  if (count($upgrades_array) > 0) {
+    deactivate_plugins( __FILE__,true);
+    echo "<div class='updated'><p>$plugin_name requires the following plugins to be updated: ".implode(", ", $upgrades_array).".</p></div>";
+  }
 }
 
 ?>

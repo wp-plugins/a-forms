@@ -8,6 +8,15 @@
 	width: 330px;
 }
 
+#setting_column ul, #setting_column ul li {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+#setting_column ul {
+	padding: 0 0 1em 0;
+}
+
 #form_column {
 	width: 620px;
 }
@@ -160,7 +169,7 @@ form textarea {
 }
 
 form #fields_sortable label {
-	width: 66px;
+	width: 67px;
 }
 form #fields_sortable input.text {
 	width: 60px;

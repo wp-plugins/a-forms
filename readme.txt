@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.5.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,8 @@ A wordpress plugin that allows you to add a form on your website.
 
 http://wordpress.org/extend/plugins/tom-m8te 
 
+http://wordpress.org/extend/plugins/jquery-ui-theme 
+
 http://wordpress.org/extend/plugins/a-forms
 
 3) Login to WordPress admin, click on Plugins / Add New / Upload, then upload the zip file you just downloaded.
@@ -30,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.2.2 =
+
+* Fixed up css issues. Added search facility with tracking.
 
 = 1.2.1 =
 
@@ -48,6 +54,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.2.2 =
+
+* Fixed up css issues. Added search facility with tracking.
 
 = 1.2.1 =
 
