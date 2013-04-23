@@ -134,11 +134,6 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
 
-  $msg_content = "<div class='updated'><p>Sorry for the confusion but you must install and activate Tom M8te before you can use A Forms. Please go to Plugins/Add New and search/install the following plugin: Tom M8te </p></div>";
-  if (!is_plugin_active("tom-m8te/tom-m8te.php")) {
-    deactivate_plugins(__FILE__, true);
-    echo($msg_content);
-  } 
 
   @check_a_forms_dependencies_are_active(
     "A Forms", 
