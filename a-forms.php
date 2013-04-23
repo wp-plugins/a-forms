@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.2.2
+Version: 1.2.3
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -867,7 +867,7 @@ function a_form_shortcode($atts) {
     $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
   }
 
-  return $return_content."</fieldset></div></form>";
+  return $return_content."</div></fieldset></form>";
 }
 
 function render_a_form_submit_html($form) {

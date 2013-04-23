@@ -1,4 +1,7 @@
 <?php
+	if (isset($_POST["action"]) && $_POST["action"] == "Reset") {
+		aform_copy_directory(AFormsPath::normalize(dirname(__FILE__)."/css"), get_template_directory());  		
+	}
 	wp_enqueue_script('jquery');
 	wp_register_script("a-forms", plugins_url("js/application.js", __FILE__));
   wp_enqueue_script("a-forms");
@@ -18,6 +21,7 @@
 		$css_content = str_replace("\'", '\'', $css_content);
 		tom_write_to_file($css_content, $location);
 	}
+
 ?>
 <div class="wrap a-form">
 <h2>A Forms - Styling</h2>
@@ -46,6 +50,12 @@
   	</p>
   	<p><label for="css_content">CSS</label><textarea id="css_content" name="css_content"><?php echo($css_content); ?></textarea></p>
   	<p><input type="submit" value="Update"/></p>
+  </form>
+
+  <h2>Reset Stylesheets</h2>
+  <p>If you run into any issues with the A Forms stylesheet, you can reset them by clicking on the reset button below. You will lose your current css changes though, so make sure you do a backup.</p>
+  <form action="" method="post">
+  	<p><input type="submit" name="action" value="Reset"/></p>
   </form>
 </div>
 </div>
