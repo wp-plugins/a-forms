@@ -60,3 +60,5 @@
 </div>
 </div>
 </div>
+<div class="clear"></div>
+<?php tom_add_social_share_links("http://wordpress.org/extend/plugins/a-forms/"); ?>

@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.2.3
+Version: 1.2.4
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -134,12 +134,11 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
 
-
   @check_a_forms_dependencies_are_active(
     "A Forms", 
     array(
-      "Tom M8te" => array("plugin"=>"tom-m8te/tom-m8te.php", "url" => "http://downloads.wordpress.org/plugin/tom-m8te.zip", "version" => "1.4.3"),
-      "JQuery UI Theme" => array("plugin"=>"jquery-ui-theme/jquery-ui-theme.php", "url" => "http://downloads.wordpress.org/plugin/jquery-ui-theme.zip"))
+      "Tom M8te" => array("plugin"=>"tom-m8te/tom-m8te.php", "url" => get_option("siteurl")."/wp-admin/plugin-install.php?tab=plugin-information&plugin=tom-m8te&_wpnonce=fff6cb9759&TB_iframe=true&width=640&height=876", "version" => "1.4.3"),
+      "JQuery UI Theme" => array("plugin"=>"jquery-ui-theme/jquery-ui-theme.php", "url" => get_option("siteurl")."/wp-admin/plugin-install.php?tab=plugin-information&plugin=jquery-ui-theme&_wpnonce=fff6cb9759&TB_iframe=true&width=640&height=876"))
   );
 }
 
@@ -228,6 +227,10 @@ function a_form_initial_page() {
   } else {
     a_form_page();
   }
+  ?>
+  <div class="clear"></div>
+  <?php 
+    tom_add_social_share_links("http://wordpress.org/extend/plugins/a-forms/");
 }
 
 function a_form_page() {
@@ -457,6 +460,7 @@ function a_form_settings_page() { ?>
   </div>
   </div>
 <?php
+  tom_add_social_share_links("http://wordpress.org/extend/plugins/a-forms/");
 }
 
 function a_form_tracking_page() { 
@@ -576,6 +580,7 @@ function a_form_tracking_page() {
   ?>
   </div>
   <?php
+  tom_add_social_share_links("http://wordpress.org/extend/plugins/a-forms/");
 }
 
 add_shortcode( 'a-form', 'a_form_shortcode' );
@@ -930,7 +935,7 @@ function check_a_forms_dependencies_are_active($plugin_name, $dependencies) {
   foreach ($dependencies as $key => $value) {
     if (!is_plugin_active($value["plugin"])) {
       $url = $value["url"];
-      array_push($download_plugins_array, $key);
+      array_push($download_plugins_array, "<a href='".$url."'>".$key."</a>");
     }
   }
   $msg_content .= implode(", ", $download_plugins_array)."</p></div>";
