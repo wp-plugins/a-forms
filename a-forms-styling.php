@@ -20,11 +20,17 @@
 		$css_content = str_replace('\"', "\"", $css_content);
 		$css_content = str_replace("\'", '\'', $css_content);
 		tom_write_to_file($css_content, $location);
+		$_GET["message"] = "Update Complete";
 	}
 
 ?>
 <div class="wrap a-form">
 <h2>A Forms - Styling</h2>
+<?php
+	if (isset($_GET["message"]) && $_GET["message"] != "") {
+    echo("<div class='updated below-h2'><p>".$_GET["message"]."</p></div>");
+  }
+?>
 <div class="postbox " style="display: block; ">
 <div class="inside">
   <form action="" method="post">
