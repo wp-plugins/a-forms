@@ -900,7 +900,11 @@ function a_form_shortcode($atts) {
     if ($field->field_type == "file" && $field->file_ext_allowed != "") {
       echo("<div>");
     } 
-    tom_add_form_field(null, $field->field_type, $field_label, "a_form_".$field_name, "a_form_".$field_name, array("class" => $field->field_type), "div", array(), $value_options);
+		$error_class = "";
+		if (isset($_SESSION["a_form_".$field_name."_error"])) {
+			$error_class = "error";
+		}
+    tom_add_form_field(null, $field->field_type, $field_label, "a_form_".$field_name, "a_form_".$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
     if ($field->field_type == "file" && $field->file_ext_allowed != "") {
       $extensions_allowed = $field->file_ext_allowed;
       $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);
