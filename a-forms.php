@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.2.4
+Version: 1.3.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -133,27 +133,90 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_port' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
+}
 
-  @check_a_forms_dependencies_are_active(
-    "A Forms", 
-    array(
-      "Tom M8te" => array("plugin"=>"tom-m8te/tom-m8te.php", "url" => get_option("siteurl")."/wp-admin/plugin-install.php?tab=plugin-information&plugin=tom-m8te&_wpnonce=fff6cb9759&TB_iframe=true&width=640&height=876", "version" => "1.4.3"),
-      "JQuery UI Theme" => array("plugin"=>"jquery-ui-theme/jquery-ui-theme.php", "url" => get_option("siteurl")."/wp-admin/plugin-install.php?tab=plugin-information&plugin=jquery-ui-theme&_wpnonce=fff6cb9759&TB_iframe=true&width=640&height=876"))
-  );
+function are_a_forms_dependencies_installed() {
+  return is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php");
+}
+
+add_action( 'admin_notices', 'a_forms_notice_notice' );
+function a_forms_notice_notice(){
+  $activate_nonce = wp_create_nonce( "activate-a-forms-dependencies" );
+  $tom_active = is_plugin_active("tom-m8te/tom-m8te.php");
+  $jquery_ui_theme_active = is_plugin_active("jquery-ui-theme/jquery-ui-theme.php");
+  if (!($tom_active && $jquery_ui_theme_active)) { ?>
+    <div class='updated below-h2'><p>Before you can use A Forms, please install/activate the following plugin(s):</p>
+    <ul>
+      <?php if (!$tom_active) { ?>
+        <li>
+          <a target="_blank" href="http://wordpress.org/extend/plugins/tom-m8te/">Tom M8te</a> 
+           &#8211; 
+          <?php if (file_exists(ABSPATH."/wp-content/plugins/tom-m8te/tom-m8te.php")) { ?>
+            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/?a_forms_install_dependency=tom-m8te&_wpnonce=<?php echo($activate_nonce); ?>">Activate</a>
+          <?php } else { ?>
+            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/plugin-install.php?tab=plugin-information&plugin=tom-m8te&_wpnonce=<?php echo($activate_nonce); ?>&TB_iframe=true&width=640&height=876">Install</a> 
+          <?php } ?>
+        </li>
+      <?php }
+      if (!$jquery_ui_theme_active) { ?>
+        <li>
+          <a target="_blank" href="http://wordpress.org/extend/plugins/jquery-ui-theme/">JQuery UI Theme</a>
+           &#8211; 
+          <?php if (file_exists(ABSPATH."/wp-content/plugins/jquery-ui-theme/jquery-ui-theme.php")) { ?>
+            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/?a_forms_install_dependency=jquery-ui-theme&_wpnonce=<?php echo($activate_nonce); ?>">Activate</a>
+          <?php } else { ?>
+            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/plugin-install.php?tab=plugin-information&plugin=jquery-ui-theme&_wpnonce=<?php echo($activate_nonce); ?>&TB_iframe=true&width=640&height=876">Install</a> 
+          <?php } ?>
+        </li>
+      <?php } ?>
+    </ul>
+    </div>
+    <?php
+  }
+
+}
+
+add_action( 'admin_init', 'register_a_forms_install_dependency_settings' );
+function register_a_forms_install_dependency_settings() {
+  if (isset($_GET["a_forms_install_dependency"])) {
+    if (wp_verify_nonce($_REQUEST['_wpnonce'], "activate-a-forms-dependencies")) {
+      switch ($_GET["a_forms_install_dependency"]) {
+        case 'jquery-ui-theme':
+          activate_plugin('jquery-ui-theme/jquery-ui-theme.php', 'plugins.php?error=false&plugin=jquery-ui-theme.php');
+          wp_redirect(get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php");
+          exit();
+          break; 
+        case 'tom-m8te':  
+          activate_plugin('tom-m8te/tom-m8te.php', 'plugins.php?error=false&plugin=tom-m8te.php');
+          wp_redirect(get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php");
+          exit();
+          break;   
+        default:
+          throw new Exception("Sorry unable to install plugin.");
+          break;
+      }
+    } else {
+      die("Security Check Failed.");
+    }
+  }
 }
 
 add_action('admin_menu', 'register_a_forms_page');
 function register_a_forms_page() {
-  add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_initial_page');
-  add_submenu_page('a-forms/a-forms.php', 'Settings', 'Settings', 'manage_options', 'a-forms/a-forms-settings.php', 'a_form_settings_page');
-  add_submenu_page('a-forms/a-forms.php', 'Tracking', 'Tracking', 'manage_options', 'a-forms/a-forms-tracking.php', 'a_form_tracking_page');
-  add_submenu_page('a-forms/a-forms.php', 'Styling', 'Styling', 'update_themes', 'a-forms/a-forms-styling.php');
+	if (are_a_forms_dependencies_installed()) {
+	  add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_initial_page');
+	  add_submenu_page('a-forms/a-forms.php', 'Settings', 'Settings', 'manage_options', 'a-forms/a-forms-settings.php', 'a_form_settings_page');
+	  add_submenu_page('a-forms/a-forms.php', 'Tracking', 'Tracking', 'manage_options', 'a-forms/a-forms-tracking.php', 'a_form_tracking_page');
+	  add_submenu_page('a-forms/a-forms.php', 'Styling', 'Styling', 'update_themes', 'a-forms/a-forms-styling.php');
+	}
 }
 
 add_action('wp_ajax_aform_css_file_selector', 'aform_css_file_selector');
 function aform_css_file_selector() {
-  update_option("aform_current_css_file", $_POST["css_file_selection"]);
-  echo(@file_get_contents(get_template_directory()."/aforms_css/".$_POST["css_file_selection"]));
+	if (are_a_forms_dependencies_installed()) {
+	  update_option("aform_current_css_file", $_POST["css_file_selection"]);
+	  echo(@file_get_contents(get_template_directory()."/aforms_css/".$_POST["css_file_selection"]));
+	}
   die();  
 }
 
@@ -166,6 +229,7 @@ function add_field_to_section() {
   die();  
 }
 
+
 add_action('wp_ajax_aforms_tinymce', 'aforms_tinymce');
 /**
  * Call TinyMCE window content via admin-ajax
@@ -174,14 +238,15 @@ add_action('wp_ajax_aforms_tinymce', 'aforms_tinymce');
  * @return html content
  */
 function aforms_tinymce() {
-
+	if (are_a_forms_dependencies_installed()) {
     // check for rights
     if ( !current_user_can('edit_pages') && !current_user_can('edit_posts') ) 
       die(__("You are not allowed to be here"));
           
     include_once( dirname( dirname(__FILE__) ) . '/a-forms/tinymce/window.php');
     
-    die();  
+    die(); 
+	} 
 }
 
 function a_form_initial_page() {
@@ -685,13 +750,14 @@ function a_form_shortcode($atts) {
       if ($_POST["action"] == "Send") {
         $subject = $form->subject;
         $from_name = "";
+				$user_email = "";
         if ($form->field_name_id != "") {
           $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
           $from_name = $_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
         }
         if ($form->field_email_id != "") {
           $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
-          $from_email = $_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
+          $user_email = $_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
         }
         if ($form->field_subject_id != "") {
           $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
@@ -700,14 +766,23 @@ function a_form_shortcode($atts) {
           }
         }
 
+				if ($form->confirmation_from_email != "") {
+					$from_email = $form->confirmation_from_email;
+				}
+
         // Send Email.
         $cc_emails = $form->to_cc_email;
-        if ($from_email != "" && $form->send_confirmation_email) {
+        if ($user_email != "" && $form->send_confirmation_email) {
           if ($cc_emails == "") {
-            $cc_emails .= $from_email;
+            $cc_emails .= $user_email;
           } else {
-            $cc_emails .= ", ".$from_email;
+            $cc_emails .= ", ".$user_email;
           }
+        }
+        if ($cc_emails == "") {
+          $cc_emails .= $from_email;
+        } else {
+          $cc_emails .= ", ".$from_email;
         }
 
         // Rip up $attachment_urls so we're left with only the paths to the files uploaded.
@@ -912,42 +987,6 @@ function aform_copy_directory($src,$dst) {
         return false;
     }
     return true;
-}
-
-function check_a_forms_dependencies_are_active($plugin_name, $dependencies) {
-  $msg_content = "<div class='updated'><p>Sorry for the confusion but you must install and activate ";
-  $plugins_array = array();
-  $upgrades_array = array();
-  define('PLUGINPATH', ABSPATH.'wp-content/plugins');
-  foreach ($dependencies as $key => $value) {
-    $plugin = get_plugin_data(PLUGINPATH."/".$value["plugin"],true,true);
-    $url = $value["url"];
-    if (!is_plugin_active($value["plugin"])) {
-      array_push($plugins_array, $key);
-    } else {
-      if (isset($value["version"]) && str_replace(".", "", $plugin["Version"]) < str_replace(".", "", $value["version"])) {
-        array_push($upgrades_array, $key);
-      }
-    }
-  }
-  $msg_content .= implode(", ", $plugins_array) . " before you can use $plugin_name. Please go to Plugins/Add New and search/install the following plugin(s): ";
-  $download_plugins_array = array();
-  foreach ($dependencies as $key => $value) {
-    if (!is_plugin_active($value["plugin"])) {
-      $url = $value["url"];
-      array_push($download_plugins_array, "<a href='".$url."'>".$key."</a>");
-    }
-  }
-  $msg_content .= implode(", ", $download_plugins_array)."</p></div>";
-  if (count($plugins_array) > 0) {
-    deactivate_plugins( __FILE__, true);
-    echo($msg_content);
-  } 
-
-  if (count($upgrades_array) > 0) {
-    deactivate_plugins( __FILE__,true);
-    echo "<div class='updated'><p>$plugin_name requires the following plugins to be updated: ".implode(", ", $upgrades_array).".</p></div>";
-  }
 }
 
 ?>

@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.5.1
-Stable tag: 1.2.4
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.3.0 =
+
+* Changed how the dependency plugin code works. Fixed the from email address not showing the correct email.
 
 = 1.2.4 =
 
@@ -62,6 +66,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.3.0 =
+
+* Changed how the dependency plugin code works. Fixed the from email address not showing the correct email.
 
 = 1.2.4 =
 
