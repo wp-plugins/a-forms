@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.3.0
+Version: 1.3.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -557,13 +557,15 @@ function a_form_tracking_page() {
 
   <div class="wrap">
   <h2>Tracking</h2>
-  <?php if (tom_get_query_string_value("id") != "") { ?>
-    <form action="" method="post">
-      <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
-      <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
-      <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
-      <p><input type="submit" name="action" value="Search" /></p>
-    </form>
+  <?php if (tom_get_query_string_value("id") != "") { 
+		if (tom_get_query_string_value("action") != "view") {	?>
+	    <form action="" method="post">
+	      <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
+	      <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
+	      <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
+	      <p><input type="submit" name="action" value="Search" /></p>
+	    </form>
+		<?php } ?>
   <?php } ?>
   <?php 
     if (!isset($_GET["action"])) {
@@ -614,7 +616,6 @@ function a_form_tracking_page() {
           <tbody>
             <?php foreach ($tracks as $track) {
               $fields_array = unserialize($track->fields_array); 
-              $query_string = "";
               echo("<tr><td>".$track->ID."</td>");
               foreach ($fields as $field) {
                 $content = $fields_array[str_replace(" ", "_", strtolower($field->field_label))];
@@ -625,12 +626,12 @@ function a_form_tracking_page() {
                   echo(preg_replace("/, $/", "", $content));
                 }
                 echo("</td>");
-                $query_string .= "a_form_".str_replace(" ", "_", strtolower($field->field_label))."=".$content."&";
               }
 
               echo("<td>".$track->referrer_url."</td>");
               echo("<td>".gmdate("Y-m-d H:i:s", strtotime($track->created_at ))." GMT</td>");
-              echo("<td><a target='_blank' href='".$track->referrer_url."?".$query_string."'>View</a></td>");
+              echo("<td><a href='".
+get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&action=view&id=".$track->ID."'>View</a></td>");
               echo("</tr>");
             }?>
           </tbody>
@@ -640,7 +641,11 @@ function a_form_tracking_page() {
       } else {
         echo("<p>No records found!</p>");
       }
-    }
+    } else if ($_GET["action"] == "view") {
+			$view = tom_get_row_by_id("a_form_tracks", "*", "ID", $_GET["id"]);
+			echo "<p><textarea rows='40' cols='160'>".$view->content."</textarea></p>";
+			echo("<p><a href='".get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&action=show&id=".$view->form_id."'>Back</a></p>");
+		}
     
   ?>
   </div>
@@ -704,7 +709,9 @@ function a_form_shortcode($atts) {
 	        $answers = "";
 	        foreach (explode(",", $field->value_options) as $key) {
 	          if ($_POST["a_form_".$field_name."_".$i] != "") {
-	            $answers .= $_POST["a_form_".$field_name."_".$i]. ", ";
+							$content = str_replace('\"', "\"", $_POST["a_form_".$field_name."_".$i]);
+							$content = str_replace("\'", '\'', $content);
+	            $answers .= $content.", ";
 	          }
 	          $i++;
 	        }
@@ -737,8 +744,10 @@ function a_form_shortcode($atts) {
 	        }
 	        
 	      } else {
-	        $email_content .= $field->field_label.": ".$_POST["a_form_".$field_name]."\n\n";
-	        $field_values[$field_name] = $_POST["a_form_".$field_name];
+					$content = str_replace('\"', "\"", $_POST["a_form_".$field_name]);
+					$content = str_replace("\'", '\'', $content);
+	        $email_content .= $field->field_label.": ".$content."\n\n";
+	        $field_values[$field_name] = $content;
 	      }
 	      
 	    }
