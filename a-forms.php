@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.3.1
+Version: 1.3.2
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -667,6 +667,8 @@ function a_form_shortcode($atts) {
 	  $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
 	  $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
 
+		$form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
+
 	  $form_valid = true;
 	  $section_index = 0;
 
@@ -683,11 +685,11 @@ function a_form_shortcode($atts) {
 	  $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'");
 	  foreach ($fields as $field) {
 	    $field_name = str_replace(" ", "_", strtolower($field->field_label));
-	    $validation_array["a_form_".$field_name] = $field->validation;
+	    $validation_array[$form_name.$field_name] = $field->validation;
 	  }
 
 	  // User submits a form action.
-	  if (isset($_POST["send_a_form"])) {
+	  if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
 	    $captcha_valid = true;
 	    $form_valid = tom_validate_form($validation_array);
 
@@ -708,8 +710,8 @@ function a_form_shortcode($atts) {
 	        $email_content .= $field->field_label.": ";
 	        $answers = "";
 	        foreach (explode(",", $field->value_options) as $key) {
-	          if ($_POST["a_form_".$field_name."_".$i] != "") {
-							$content = str_replace('\"', "\"", $_POST["a_form_".$field_name."_".$i]);
+	          if ($_POST[$form_name.$field_name."_".$i] != "") {
+							$content = str_replace('\"', "\"", $_POST[$form_name.$field_name."_".$i]);
 							$content = str_replace("\'", '\'', $content);
 	            $answers .= $content.", ";
 	          }
@@ -722,11 +724,11 @@ function a_form_shortcode($atts) {
 	        // Upload file.
 
 	        try {
-	          $filedst = AForm::upload_file("a_form_".$field_name, $field->file_ext_allowed);
-	          array_push($attachment_urls, "a_form_".$field_name."=>".$filedst);
+	          $filedst = AForm::upload_file($form_name.$field_name, $field->file_ext_allowed);
+	          array_push($attachment_urls, $form_name.$field_name."=>".$filedst);
 	        } catch(Exception $ex) {
 	          $form_valid = false;
-	          $_SESSION["a_form_".$field_name."_error"] = $ex->getMessage();
+	          $_SESSION[$form_name.$field_name."_error"] = $ex->getMessage();
 	        }
 	        
 	        if ($filedst != "") {
@@ -736,7 +738,7 @@ function a_form_shortcode($atts) {
 	            $records = explode("::", $_POST["a_form_attachment_urls"]);
 	            foreach ($records as $record) {
 	              $key_value = explode("=>", $record);
-	              if ($key_value[0] == "a_form_".$field_name && $key_value[1] != "") {
+	              if ($key_value[0] == $form_name.$field_name && $key_value[1] != "") {
 	                $field_values[$field_name] = $key_value[1];
 	              }
 	            }
@@ -744,7 +746,7 @@ function a_form_shortcode($atts) {
 	        }
 	        
 	      } else {
-					$content = str_replace('\"', "\"", $_POST["a_form_".$field_name]);
+					$content = str_replace('\"', "\"", $_POST[$form_name.$field_name]);
 					$content = str_replace("\'", '\'', $content);
 	        $email_content .= $field->field_label.": ".$content."\n\n";
 	        $field_values[$field_name] = $content;
@@ -753,8 +755,8 @@ function a_form_shortcode($atts) {
 	    }
 
 
-	    if ($_POST["action"] == "Send" && isset($_POST["a_form_captcha"]) && $form->include_captcha) {
-	      $captcha_valid = tom_check_captcha("a_form_captcha");
+	    if ($_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
+	      $captcha_valid = tom_check_captcha($form_name."captcha");
 	    }
 	    
 	    if ($form_valid && $captcha_valid) {
@@ -764,16 +766,16 @@ function a_form_shortcode($atts) {
 					$user_email = "";
 	        if ($form->field_name_id != "") {
 	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
-	          $from_name = $_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
+	          $from_name = $_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
 	        }
 	        if ($form->field_email_id != "") {
 	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
-	          $user_email = $_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
+	          $user_email = $_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
 	        }
 	        if ($form->field_subject_id != "") {
 	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
-	          if (isset($_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))])) {
-	            $subject .= " - ".$_POST["a_form_".str_replace(" ", "_", strtolower($row->field_label))];
+	          if (isset($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))])) {
+	            $subject .= " - ".$_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
 	          }
 	        }
 
@@ -858,12 +860,12 @@ function a_form_shortcode($atts) {
 	    if ($field->field_type == "checkbox") {
 	      $i = 0;
 	      foreach (explode(",", $field->value_options) as $key) {
-	        tom_add_form_field(null, "hidden", $field->field_label, "a_form_".$field_name."_".$i, "a_form_".$field_name."_".$i, array(), "p", array(), array());  
+	        tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name."_".$i, $form_name.$field_name."_".$i, array(), "p", array(), array());  
 	        $i++;
 	      }
 	    } else {
 
-	      tom_add_form_field(null, "hidden", $field->field_label, "a_form_".$field_name, "a_form_".$field_name, array(), "p", array(), array());
+	      tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name, $form_name.$field_name, array(), "p", array(), array());
 	      
 	    }
 	    
@@ -903,7 +905,7 @@ function a_form_shortcode($atts) {
 	      }
 	    }
 	    $field_label = $field->field_label;
-	    if (preg_match("/required/",$validation_array["a_form_".$field_name])) {
+	    if (preg_match("/required/",$validation_array[$form_name.$field_name])) {
 	      $field_label .= "<abbr title='required'>*</abbr>";
 	    }
 
@@ -912,10 +914,10 @@ function a_form_shortcode($atts) {
 	      echo("<div>");
 	    } 
 			$error_class = "";
-			if (isset($_SESSION["a_form_".$field_name."_error"])) {
+			if (isset($_SESSION[$form_name.$field_name."_error"])) {
 				$error_class = "error";
 			}
-	    tom_add_form_field(null, $field->field_type, $field_label, "a_form_".$field_name, "a_form_".$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
+	    tom_add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
 	    if ($field->field_type == "file" && $field->file_ext_allowed != "") {
 	      $extensions_allowed = $field->file_ext_allowed;
 	      $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);
