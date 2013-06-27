@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.5.1
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.3.3 =
+
+* Able to now use algorithms such as SSL or TLS security algorithms when sending out emails.
 
 = 1.3.2 =
 
@@ -74,6 +78,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.3.3 =
+
+* Able to now use algorithms such as SSL or TLS security algorithms when sending out emails.
 
 = 1.3.2 =
 

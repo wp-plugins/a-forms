@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.3.2
+Version: 1.3.3
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -131,6 +131,8 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_mail_host' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_auth' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_port' );
+	register_setting( 'a-forms-settings-group', 'a_forms_enable_tls' );
+	register_setting( 'a-forms-settings-group', 'a_forms_enable_ssl' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
 }
@@ -487,6 +489,26 @@ function a_form_settings_page() { ?>
 
         <tr valign="top">
           <th scope="row">
+            <label for="a_forms_enable_tls">Enable TLS:</label>
+          </th>
+          <td>
+            <input type="hidden" name="a_forms_enable_tls" value="0">
+            <input type="checkbox" id="a_forms_enable_tls" name="a_forms_enable_tls" value="1" <?php if (get_option('a_forms_enable_tls')) {echo "checked";} ?> />
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <th scope="row">
+            <label for="a_forms_enable_ssl">Enable SSL:</label>
+          </th>
+          <td>
+            <input type="hidden" name="a_forms_enable_ssl" value="0">
+            <input type="checkbox" id="a_forms_enable_ssl" name="a_forms_enable_ssl" value="1" <?php if (get_option('a_forms_enable_ssl')) {echo "checked";} ?> />
+          </td>
+        </tr>
+
+        <tr valign="top">
+          <th scope="row">
             <label for="a_forms_smtp_port">SMTP Port:</label>
           </th>
           <td>
@@ -805,7 +827,15 @@ function a_form_shortcode($atts) {
 	          array_push($smtp_attachment_urls, $temp[1]);
 	        }
 
-	        $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"));        
+					$secure_algorithms = array();
+					if (get_option("a_forms_enable_tls")) {
+						$secure_algorithms["tls"] = "tls";
+					}
+					if (get_option("a_forms_enable_ssl")) {
+						$secure_algorithms["ssl"] = "ssl";
+					}
+
+	        $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
 	        
 	        if ($mail_message == "<div class='success'>Message sent!</div>") {
 
