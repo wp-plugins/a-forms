@@ -998,7 +998,7 @@ function render_a_form_submit_html($form) {
   $return_content = "";
   if ($form->include_captcha) {
     ob_start();
-    tom_add_form_field(null, "captcha", "Captcha", "a_form_captcha", "a_form_captcha", array(), "div", array("class" => "captcha"));
+    tom_add_form_field(null, "captcha", "Captcha", "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha", "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha", array(), "div", array("class" => "captcha"));
     $return_content .= ob_get_contents();
     ob_end_clean();
   }
