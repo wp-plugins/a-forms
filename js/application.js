@@ -10,6 +10,9 @@ jQuery(function() {
     });    
   }
 
+  show_hide_captcha_type();
+  jQuery("#include_captcha_include_captcha_1").click(show_hide_captcha_type);
+
   jQuery(document).delegate(".delete-option", "click", function() {
     jQuery(this).parent().addClass("deleted");
     new_options = [];
@@ -173,6 +176,14 @@ jQuery(function() {
     jQuery("#aform_save_and_continue_panel input").show();
   });
 });
+
+function show_hide_captcha_type() {
+  if (jQuery("#include_captcha_include_captcha_1").is(':checked')) {
+    jQuery("#captcha_type_container").show();
+  } else {
+    jQuery("#captcha_type_container").hide();
+  }
+}
 
 function make_fields_sortable_odd_and_even_rows() {
   jQuery("#fields_sortable > li").removeClass("odd").removeClass("even");

@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.3.3
+Version: 1.4.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -112,6 +112,12 @@ function a_forms_activate() {
   $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'include_admin_in_emails'");
   if ($checkcol == 0) {
     $sql = "ALTER TABLE $a_form_forms_table ADD include_admin_in_emails VARCHAR(1)";
+    $wpdb->query($sql); 
+  }
+
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'captcha_type'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD captcha_type VARCHAR(1) DEFAULT '0'";
     $wpdb->query($sql); 
   }
 
@@ -564,18 +570,16 @@ function a_form_tracking_page() {
   wp_enqueue_style("jquery-ui-datepicker");
   ?>
 
-      <script language="javascript">
-      jQuery(function() {
-        jQuery('.datepicker').datepicker({
-          dateFormat : 'yy-m-d',
-          showOn: "button",
-          buttonImage: "<?php echo(plugins_url( '/images/calendar.gif', __FILE__ )); ?>",
-          buttonImageOnly: true
-        });
-
-      });
-
-    </script>
+  <script language="javascript">
+  jQuery(function() {
+    jQuery('.datepicker').datepicker({
+      dateFormat : 'yy-m-d',
+      showOn: "button",
+      buttonImage: "<?php echo(plugins_url( '/images/calendar.gif', __FILE__ )); ?>",
+      buttonImageOnly: true
+    });
+  });
+  </script>
 
   <div class="wrap">
   <h2>Tracking</h2>
@@ -776,13 +780,42 @@ function a_form_shortcode($atts) {
 	      
 	    }
 
-
+      // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
 	    if ($_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
-	      $captcha_valid = tom_check_captcha($form_name."captcha");
+
+        // User clicked on Send button and the form has a captcha.
+        // Check the type of captcha.
+        if ($form->captcha_type == "0") {
+          // Form is using the Securimage Captcha.
+          $captcha_valid = tom_check_captcha($form_name."captcha");
+        } else {
+          // Form is using the Math Captcha.
+
+          // Check that the answer is first number plus second number.
+          $captcha_valid = 
+          (
+            (
+              $_POST[aform_field_name($form, "captcha_first_number")] 
+              + 
+              $_POST[aform_field_name($form, "captcha_second_number")]
+            ) 
+            == $_POST[aform_field_name($form, "captcha")]
+          );
+
+          // Check to see if captcha is valid.
+          if ($captcha_valid == false) {
+            // Captcha is invalid, so display error message.
+            $_SESSION["a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha_error"] = "invalid captcha code, try again!";
+          }
+        }
 	    }
 	    
+      // Check to see if form is valid.
 	    if ($form_valid && $captcha_valid) {
+        // Form is valid.
 	      if ($_POST["action"] == "Send") {
+          // User clicked Send, so since form is valid and they click Send, send the email.
+
 	        $subject = $form->subject;
 	        $from_name = "";
 					$user_email = "";
@@ -998,7 +1031,22 @@ function render_a_form_submit_html($form) {
   $return_content = "";
   if ($form->include_captcha) {
     ob_start();
-    tom_add_form_field(null, "captcha", "Captcha", "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha", "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha", array(), "div", array("class" => "captcha"));
+    if ($form->captcha_type == "0") {
+
+      tom_add_form_field(null, "captcha", "Captcha", aform_field_name($form, "captcha"), aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
+
+    } else {
+
+      $first_number = $_POST[aform_field_name($form, "captcha_first_number")] = rand(1, 20);
+      $second_number = $_POST[aform_field_name($form, "captcha_second_number")] = rand(1, 20);
+
+      tom_add_form_field(null, "hidden", "First number", aform_field_name($form, "captcha_first_number"), 
+        aform_field_name($form, "captcha_first_number")
+        , array(), "div", array());
+      tom_add_form_field(null, "hidden", "Second number", aform_field_name($form, "captcha_second_number"), aform_field_name($form, "captcha_second_number"), array(), "div", array());
+
+      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, aform_field_name($form, "captcha"), aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
+    }
     $return_content .= ob_get_contents();
     ob_end_clean();
   }
@@ -1016,6 +1064,10 @@ function add_a_forms_js_and_css() {
   wp_register_style("a-forms", get_template_directory_uri().'/aforms_css/'.get_option("aform_current_css_file"));
   wp_enqueue_style("a-forms");
 } 
+
+function aform_field_name($form, $field_name) {
+  return "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_".$field_name;
+}
 
 // Copy directory to another location.
 function aform_copy_directory($src,$dst) { 

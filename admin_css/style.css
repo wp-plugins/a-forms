@@ -52,7 +52,7 @@ li.shiftable span, li.shiftable ul, li.shiftable div.value-option-controls, li.s
 li.shiftable span.colon {
 	float: none;
 	display: inline;
-	margin: 0 5px;
+	margin: 0;
 }
 
 li.shiftable div.value-option-controls, li.shiftable div.file-ext-controls {
