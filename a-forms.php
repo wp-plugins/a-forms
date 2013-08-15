@@ -6,7 +6,7 @@ Description: Adds a contact form to your wordpress site.
 
 Installation:
 
-1) Install WordPress 3.5.2 or higher
+1) Install WordPress 3.6 or higher
 
 2) Download the latest from:
 
@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.4.0
+Version: 1.4.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -684,6 +684,7 @@ add_shortcode( 'a-form', 'a_form_shortcode' );
 function a_form_shortcode($atts) {
 	if (is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php")) {
 
+    $nonce_passed = true;
 		$return_content = "";
 	  $email_content = "";
 	  $validation_array = array();
@@ -714,8 +715,9 @@ function a_form_shortcode($atts) {
 	    $validation_array[$form_name.$field_name] = $field->validation;
 	  }
 
-	  // User submits a form action.
+	  // Check to see if User submits a form action.
 	  if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
+      // User has submitted an aform.
 	    $captcha_valid = true;
 	    $form_valid = tom_validate_form($validation_array);
 
@@ -811,7 +813,8 @@ function a_form_shortcode($atts) {
 	    }
 	    
       // Check to see if form is valid.
-	    if ($form_valid && $captcha_valid) {
+      $nonce_passed = wp_verify_nonce($_REQUEST["_wpnonce"], "a-forms-contact-a-form");
+	    if ($nonce_passed && $form_valid && $captcha_valid) {
         // Form is valid.
 	      if ($_POST["action"] == "Send") {
           // User clicked Send, so since form is valid and they click Send, send the email.
@@ -893,12 +896,22 @@ function a_form_shortcode($atts) {
 	        $return_content .= $mail_message;
 	      }
 	    } else {
+
+        // Check to see if the input field values are valid, but not the wpnonce value.
+        if ($form_valid && $captcha_valid && $nonce_passed == false) {
+          // The input field values are valid except the wpnonce value. Therefore there must have been a cross site spam attack. So display fail send email message.
+          $return_content .= "<div class='a-form error'>Failed to send your message. Please try again later.</div>";
+        }
 	      $form_valid = false;
+
 	    }
 
 	  }
 	  
+    $aform_form_nonce = wp_create_nonce( "a-forms-contact-a-form" );
 	  $return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form' enctype='multipart/form-data'>";
+
+    $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
 	  $return_content .= "<fieldset>";
 	  // Get next section
 	  if ($_POST["action"] == "Next") {
