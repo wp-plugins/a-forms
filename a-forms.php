@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.4.1
+Version: 1.4.2
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -137,8 +137,8 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_mail_host' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_auth' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_port' );
-	register_setting( 'a-forms-settings-group', 'a_forms_enable_tls' );
-	register_setting( 'a-forms-settings-group', 'a_forms_enable_ssl' );
+  register_setting( 'a-forms-settings-group', 'a_forms_enable_tls' );
+  register_setting( 'a-forms-settings-group', 'a_forms_enable_ssl' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
 }
@@ -211,28 +211,28 @@ function register_a_forms_install_dependency_settings() {
 
 add_action('admin_menu', 'register_a_forms_page');
 function register_a_forms_page() {
-	if (are_a_forms_dependencies_installed()) {
-	  add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_initial_page');
-	  add_submenu_page('a-forms/a-forms.php', 'Settings', 'Settings', 'manage_options', 'a-forms/a-forms-settings.php', 'a_form_settings_page');
-	  add_submenu_page('a-forms/a-forms.php', 'Tracking', 'Tracking', 'manage_options', 'a-forms/a-forms-tracking.php', 'a_form_tracking_page');
-	  add_submenu_page('a-forms/a-forms.php', 'Styling', 'Styling', 'update_themes', 'a-forms/a-forms-styling.php');
-	}
+  if (are_a_forms_dependencies_installed()) {
+    add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_initial_page');
+    add_submenu_page('a-forms/a-forms.php', 'Settings', 'Settings', 'manage_options', 'a-forms/a-forms-settings.php', 'a_form_settings_page');
+    add_submenu_page('a-forms/a-forms.php', 'Tracking', 'Tracking', 'manage_options', 'a-forms/a-forms-tracking.php', 'a_form_tracking_page');
+    add_submenu_page('a-forms/a-forms.php', 'Styling', 'Styling', 'update_themes', 'a-forms/a-forms-styling.php');
+  }
 }
 
 add_action('wp_ajax_aform_css_file_selector', 'aform_css_file_selector');
 function aform_css_file_selector() {
-	if (are_a_forms_dependencies_installed()) {
-	  update_option("aform_current_css_file", $_POST["css_file_selection"]);
-	  echo(@file_get_contents(get_template_directory()."/aforms_css/".$_POST["css_file_selection"]));
-	}
+  if (are_a_forms_dependencies_installed()) {
+    update_option("aform_current_css_file", esc_html($_POST["css_file_selection"]));
+    echo(@file_get_contents(get_template_directory()."/aforms_css/".esc_html($_POST["css_file_selection"])));
+  }
   die();  
 }
 
 add_action('wp_ajax_add_field_to_section', 'add_field_to_section');
 function add_field_to_section() {
   global $wpdb;
-  $section = tom_get_row_by_id("a_form_sections", "*", "ID", $_POST["section_id"]);
-  tom_insert_record("a_form_fields", array("field_order" => $_POST["field_order"], "section_id" => $_POST["section_id"], "form_id" => $section->form_id));
+  $section = tom_get_row_by_id("a_form_sections", "*", "ID", esc_html($_POST["section_id"]));
+  tom_insert_record("a_form_fields", array("field_order" => esc_html($_POST["field_order"]), "section_id" => esc_html($_POST["section_id"]), "form_id" => $section->form_id));
   echo $section->ID."::".$wpdb->insert_id;
   die();  
 }
@@ -246,7 +246,7 @@ add_action('wp_ajax_aforms_tinymce', 'aforms_tinymce');
  * @return html content
  */
 function aforms_tinymce() {
-	if (are_a_forms_dependencies_installed()) {
+  if (are_a_forms_dependencies_installed()) {
     // check for rights
     if ( !current_user_can('edit_pages') && !current_user_can('edit_posts') ) 
       die(__("You are not allowed to be here"));
@@ -254,7 +254,7 @@ function aforms_tinymce() {
     include_once( dirname( dirname(__FILE__) ) . '/a-forms/tinymce/window.php');
     
     die(); 
-	} 
+  } 
 }
 
 function a_form_initial_page() {
@@ -280,8 +280,8 @@ function a_form_initial_page() {
     update_option("include_securimage", "1");
   } 
 
-  if (tom_get_query_string_value("a_form_page") == "fields") {
-    if ($_GET["action"] == "delete") {
+  if (esc_html(tom_get_query_string_value("a_form_page")) == "fields") {
+    if (esc_html($_GET["action"]) == "delete") {
       AFormFields::delete();
     }
   }
@@ -289,10 +289,10 @@ function a_form_initial_page() {
   if (tom_get_query_string_value("a_form_page") == "section") {
     a_form_section_page();
   } else if (tom_get_query_string_value("a_form_page") == "section_section_sort") {
-    tom_update_record_by_id("a_form_sections", array("section_order" => $_POST["section_order"]), "ID", $_POST["ID"]);
+    tom_update_record_by_id("a_form_sections", array("section_order" => esc_html($_POST["section_order"])), "ID", esc_html($_POST["ID"]));
     exit;
   } else if (tom_get_query_string_value("a_form_page") == "section_field_sort") {
-    tom_update_record_by_id("a_form_fields", array("field_order" => $_POST["field_order"], "section_id" => $_POST["section_id"]), "FID", $_POST["FID"]);
+    tom_update_record_by_id("a_form_fields", array("field_order" => esc_html($_POST["field_order"]), "section_id" => esc_html($_POST["section_id"])), "FID", esc_html($_POST["FID"]));
     exit;
   } else if (tom_get_query_string_value("a_form_page") == "create_field") {
 
@@ -309,10 +309,11 @@ function a_form_initial_page() {
 function a_form_page() {
   if (tom_get_query_string_value("a_form_page") != "section") {
     if (isset($_POST["action"])) {
-      if ($_POST["action"] == "Update") {
+      $action = esc_html($_POST["action"]);
+      if ($action == "Update") {
         AForm::update();
       }
-      if ($_POST["action"] == "Create") {
+      if ($action == "Create") {
         AForm::create();
       }
     }
@@ -327,13 +328,13 @@ function a_form_page() {
   <?php
 
   if (isset($_GET["message"]) && $_GET["message"] != "") {
-    echo("<div class='updated below-h2'><p>".$_GET["message"]."</p></div>");
+    echo("<div class='updated below-h2'><p>".esc_html($_GET["message"])."</p></div>");
   }
 
   if (isset($_GET["action"]) && $_GET["action"] != "delete") {
     if ($_GET["action"] == "edit") {
       // Display Edit Page
-      $a_form = tom_get_row_by_id("a_form_forms", "*", "ID", $_GET["id"]); ?>
+      $a_form = tom_get_row_by_id("a_form_forms", "*", "ID", esc_html($_GET["id"])); ?>
 
         <div class="postbox " style="display: block; ">
         <div class="inside">
@@ -346,7 +347,7 @@ function a_form_page() {
     
     <?php }
 
-    if ($_GET["action"] == "new") {
+    if (esc_html($_GET["action"]) == "new") {
       // Display New Page
       ?>
 
@@ -416,13 +417,13 @@ function a_form_section_page() {
   <?php
 
   if (isset($_GET["message"]) && $_GET["message"] != "") {
-    echo("<div class='updated below-h2'><p>".$_GET["message"]."</p></div>");
+    echo("<div class='updated below-h2'><p>".esc_html($_GET["message"])."</p></div>");
   }
 
   if (isset($_GET["action"]) && $_GET["action"] != "delete") {
     if ($_GET["action"] == "edit") {
       // Display Edit Page
-      $a_form = tom_get_row_by_id("a_form_sections", "*", "ID", $_GET["id"]); ?>
+      $a_form = tom_get_row_by_id("a_form_sections", "*", "ID", esc_html($_GET["id"])); ?>
       <div class="postbox " style="display: block; ">
       <div class="inside">
         <form action="" method="post">
@@ -433,7 +434,7 @@ function a_form_section_page() {
       </div>
     <?php }
 
-    if ($_GET["action"] == "new") {
+    if (esc_html($_GET["action"]) == "new") {
       // Display New Page
       ?>
       <div class="postbox " style="display: block; ">
@@ -583,15 +584,15 @@ function a_form_tracking_page() {
 
   <div class="wrap">
   <h2>Tracking</h2>
-  <?php if (tom_get_query_string_value("id") != "") { 
-		if (tom_get_query_string_value("action") != "view") {	?>
-	    <form action="" method="post">
-	      <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
-	      <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
-	      <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
-	      <p><input type="submit" name="action" value="Search" /></p>
-	    </form>
-		<?php } ?>
+  <?php if (esc_html(tom_get_query_string_value("id")) != "") { 
+    if (esc_html(tom_get_query_string_value("action")) != "view") { ?>
+      <form action="" method="post">
+        <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
+        <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
+        <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
+        <p><input type="submit" name="action" value="Search" /></p>
+      </form>
+    <?php } ?>
   <?php } ?>
   <?php 
     if (!isset($_GET["action"])) {
@@ -601,29 +602,29 @@ function a_form_tracking_page() {
       
       $page_no = 0;
       if (isset($_GET["a_form_tracks_page"])) {
-        $page_no = $_GET["a_form_tracks_page"];
+        $page_no = esc_html($_GET["a_form_tracks_page"]);
       }
       $offset = $page_no * $limit_clause;
-      $where_sql = "form_id=".$_GET["id"];
-      if (tom_get_query_string_value("search_text") != "") {
-        $where_sql .= " AND content LIKE '%".$_POST["search_text"]."%'";
+      $where_sql = "form_id=".esc_html($_GET["id"]);
+      if (esc_html(tom_get_query_string_value("search_text")) != "") {
+        $where_sql .= " AND content LIKE '%".esc_html($_POST["search_text"])."%'";
       }
 
-      if ((tom_get_query_string_value("search_date_from") != null) && (tom_get_query_string_value("search_date_to") != null)) {
-        $where_sql .= " AND (created_at BETWEEN '".tom_get_query_string_value("search_date_from")." 00:00:00' AND '".tom_get_query_string_value("search_date_to")." 23:59:59')";
-      } else if (tom_get_query_string_value("search_date_from") != null) {
-        $where_sql .= " AND created_at > '".tom_get_query_string_value("search_date_from")." 00:00:00'";
-      } else if (tom_get_query_string_value("search_date_to") != null) {
-        $where_sql .= " AND created_at < '".tom_get_query_string_value("search_date_to")." 23:59:59'";
+      if ((esc_html(tom_get_query_string_value("search_date_from")) != null) && (esc_html(tom_get_query_string_value("search_date_to")) != null)) {
+        $where_sql .= " AND (created_at BETWEEN '".esc_html(tom_get_query_string_value("search_date_from"))." 00:00:00' AND '".esc_html(tom_get_query_string_value("search_date_to"))." 23:59:59')";
+      } else if (esc_html(tom_get_query_string_value("search_date_from")) != null) {
+        $where_sql .= " AND created_at > '".esc_html(tom_get_query_string_value("search_date_from"))." 00:00:00'";
+      } else if (esc_html(tom_get_query_string_value("search_date_to")) != null) {
+        $where_sql .= " AND created_at < '".esc_html(tom_get_query_string_value("search_date_to"))." 23:59:59'";
       }
 
       $tracks = tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC"), "$limit_clause OFFSET $offset");
-      $fields = tom_get_results("a_form_fields", "*", "form_id=".$_GET["id"], array());
+      $fields = tom_get_results("a_form_fields", "*", "form_id=".esc_html($_GET["id"]), array());
       
       $total_tracks = count(tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC")));
 
       if ($total_tracks > 0) {
-        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"]."&search_text=".tom_get_query_string_value("search_text")."&search_date_from=".tom_get_query_string_value("search_date_from")."&search_date_to=".tom_get_query_string_value("search_date_to"), "ASC", "top");
+        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, esc_html($_GET["a_form_tracks_page"]), "?page=a-forms/a-forms-tracking.php&action=show&id=".esc_html($_GET["id"])."&search_text=".esc_html(tom_get_query_string_value("search_text"))."&search_date_from=".esc_html(tom_get_query_string_value("search_date_from"))."&search_date_to=".esc_html(tom_get_query_string_value("search_date_to")), "ASC", "top");
       ?>
         <table id="tracking">
           <thead>
@@ -668,10 +669,10 @@ get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&act
         echo("<p>No records found!</p>");
       }
     } else if ($_GET["action"] == "view") {
-			$view = tom_get_row_by_id("a_form_tracks", "*", "ID", $_GET["id"]);
-			echo "<p><textarea rows='40' cols='160'>".$view->content."</textarea></p>";
-			echo("<p><a href='".get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&action=show&id=".$view->form_id."'>Back</a></p>");
-		}
+      $view = tom_get_row_by_id("a_form_tracks", "*", "ID", $_GET["id"]);
+      echo "<p><textarea rows='40' cols='160'>".$view->content."</textarea></p>";
+      echo("<p><a href='".get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&action=show&id=".$view->form_id."'>Back</a></p>");
+    }
     
   ?>
   </div>
@@ -682,108 +683,113 @@ get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&act
 add_shortcode( 'a-form', 'a_form_shortcode' );
 
 function a_form_shortcode($atts) {
-	if (is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php")) {
+  if (is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php")) {
 
     $nonce_passed = true;
-		$return_content = "";
-	  $email_content = "";
-	  $validation_array = array();
-	  $from_email = get_option("admin_email");
-	  $current_datetime = gmdate( 'Y-m-d H:i:s');
+    $return_content = "";
+    $email_content = "";
+    $validation_array = array();
+    $from_email = get_option("admin_email");
+    $current_datetime = gmdate( 'Y-m-d H:i:s');
 
-	  $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
-	  $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
+    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
 
-		$form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
+    $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
-	  $form_valid = true;
-	  $section_index = 0;
+    $form_valid = true;
+    $section_index = 0;
 
-	  if (isset($_POST["send_a_form_section"])) {
-	    $section_index = $_POST["send_a_form_section"];
-	  } else {
-	    $section_index = 0;
-	  }
+    if (isset($_POST["send_a_form_section"])) {
+      $section_index = esc_html($_POST["send_a_form_section"]);
+    } else {
+      $section_index = 0;
+    }
 
-	  // Get this section.
-	  $section = $sections[$section_index];
+    // Get this section.
+    $section = $sections[$section_index];
 
-	  // Add validation for this section only.
-	  $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'");
-	  foreach ($fields as $field) {
-	    $field_name = str_replace(" ", "_", strtolower($field->field_label));
-	    $validation_array[$form_name.$field_name] = $field->validation;
-	  }
+    // Add validation for this section only.
+    $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'");
+    foreach ($fields as $field) {
+      $field_name = str_replace(" ", "_", strtolower($field->field_label));
+      $validation_array[$form_name.$field_name] = $field->validation;
+    }
 
-	  // Check to see if User submits a form action.
-	  if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
+    // Check to see if User submits a form action.
+    if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
+
+      foreach ($_POST as $key => $value) {
+        $_POST[$key] = esc_attr(esc_html($value));
+      }
+
       // User has submitted an aform.
-	    $captcha_valid = true;
-	    $form_valid = tom_validate_form($validation_array);
+      $captcha_valid = true;
+      $form_valid = tom_validate_form($validation_array);
 
-	    $field_values = array();
-	    $attachment_urls = array();
+      $field_values = array();
+      $attachment_urls = array();
 
-	    if (isset($_POST["a_form_attachment_urls"]) && $_POST["a_form_attachment_urls"] != "") {
-	      $attachment_urls = explode("::", $_POST["a_form_attachment_urls"]);
-	    }
+      if (isset($_POST["a_form_attachment_urls"]) && $_POST["a_form_attachment_urls"] != "") {
+        $attachment_urls = explode("::", esc_html($_POST["a_form_attachment_urls"]));
+      }
 
-	    // Construct email content.
-	    $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
-	    foreach ($all_fields as $field) {
-	      $field_name = str_replace(" ", "_", strtolower($field->field_label));
+      // Construct email content.
+      $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
+      foreach ($all_fields as $field) {
+        $field_name = str_replace(" ", "_", strtolower($field->field_label));
 
-	      if ($field->field_type == "checkbox") {
-	        $i = 0;
-	        $email_content .= $field->field_label.": ";
-	        $answers = "";
-	        foreach (explode(",", $field->value_options) as $key) {
-	          if ($_POST[$form_name.$field_name."_".$i] != "") {
-							$content = str_replace('\"', "\"", $_POST[$form_name.$field_name."_".$i]);
-							$content = str_replace("\'", '\'', $content);
-	            $answers .= $content.", ";
-	          }
-	          $i++;
-	        }
-	        $email_content .= preg_replace("/, $/", "", $answers);
-	        $email_content .= "\n\n";
-	        $field_values[$field_name] = $answers;
-	      } else if ($field->field_type == "file") {
-	        // Upload file.
+        if ($field->field_type == "checkbox") {
+          $i = 0;
+          $email_content .= $field->field_label.": ";
+          $answers = "";
+          foreach (explode(",", $field->value_options) as $key) {
+            if (esc_html($_POST[$form_name.$field_name."_".$i]) != "") {
+              $content = str_replace('\"', "\"", esc_html($_POST[$form_name.$field_name."_".$i]));
+              $content = str_replace("\'", '\'', $content);
+              $answers .= $content.", ";
+            }
+            $i++;
+          }
+          $email_content .= preg_replace("/, $/", "", $answers);
+          $email_content .= "\n\n";
+          $field_values[$field_name] = $answers;
+        } else if ($field->field_type == "file") {
+          // Upload file.
 
-	        try {
-	          $filedst = AForm::upload_file($form_name.$field_name, $field->file_ext_allowed);
-	          array_push($attachment_urls, $form_name.$field_name."=>".$filedst);
-	        } catch(Exception $ex) {
-	          $form_valid = false;
-	          $_SESSION[$form_name.$field_name."_error"] = $ex->getMessage();
-	        }
-	        
-	        if ($filedst != "") {
-	          $field_values[$field_name] = $filedst;
-	        } else {
-	          if ($_POST["a_form_attachment_urls"] != "") {
-	            $records = explode("::", $_POST["a_form_attachment_urls"]);
-	            foreach ($records as $record) {
-	              $key_value = explode("=>", $record);
-	              if ($key_value[0] == $form_name.$field_name && $key_value[1] != "") {
-	                $field_values[$field_name] = $key_value[1];
-	              }
-	            }
-	          }
-	        }
-	        
-	      } else {
-					$content = str_replace('\"', "\"", $_POST[$form_name.$field_name]);
-					$content = str_replace("\'", '\'', $content);
-	        $email_content .= $field->field_label.": ".$content."\n\n";
-	        $field_values[$field_name] = $content;
-	      }
-	      
-	    }
+          try {
+            $filedst = AForm::upload_file($form_name.$field_name, $field->file_ext_allowed);
+            array_push($attachment_urls, $form_name.$field_name."=>".$filedst);
+          } catch(Exception $ex) {
+            $form_valid = false;
+            $_SESSION[$form_name.$field_name."_error"] = $ex->getMessage();
+          }
+          
+          if ($filedst != "") {
+            $field_values[$field_name] = $filedst;
+          } else {
+            if (esc_html($_POST["a_form_attachment_urls"]) != "") {
+              $records = explode("::", esc_html($_POST["a_form_attachment_urls"]));
+              foreach ($records as $record) {
+                $key_value = explode("=>", $record);
+                if ($key_value[0] == $form_name.$field_name && $key_value[1] != "") {
+                  $field_values[$field_name] = $key_value[1];
+                }
+              }
+            }
+          }
+          
+        } else {
+          $content = str_replace('\"', "\"", esc_html($_POST[$form_name.$field_name]));
+          $content = str_replace("\'", '\'', $content);
+          $email_content .= $field->field_label.": ".$content."\n\n";
+          $field_values[$field_name] = $content;
+        }
+        
+      }
 
       // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
-	    if ($_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
+      if (isset($_POST["action"]) && $_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
 
         // User clicked on Send button and the form has a captcha.
         // Check the type of captcha.
@@ -797,11 +803,11 @@ function a_form_shortcode($atts) {
           $captcha_valid = 
           (
             (
-              $_POST[aform_field_name($form, "captcha_first_number")] 
+              esc_html($_POST[aform_field_name($form, "captcha_first_number")]) 
               + 
-              $_POST[aform_field_name($form, "captcha_second_number")]
+              esc_html($_POST[aform_field_name($form, "captcha_second_number")])
             ) 
-            == $_POST[aform_field_name($form, "captcha")]
+            == esc_html($_POST[aform_field_name($form, "captcha")])
           );
 
           // Check to see if captcha is valid.
@@ -810,234 +816,234 @@ function a_form_shortcode($atts) {
             $_SESSION["a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha_error"] = "invalid captcha code, try again!";
           }
         }
-	    }
-	    
+      }
+      
       // Check to see if form is valid.
       $nonce_passed = wp_verify_nonce($_REQUEST["_wpnonce"], "a-forms-contact-a-form");
-	    if ($nonce_passed && $form_valid && $captcha_valid) {
+      if ($nonce_passed && $form_valid && $captcha_valid) {
         // Form is valid.
-	      if ($_POST["action"] == "Send") {
+        if (esc_html($_POST["action"]) == "Send") {
           // User clicked Send, so since form is valid and they click Send, send the email.
 
-	        $subject = $form->subject;
-	        $from_name = "";
-					$user_email = "";
-	        if ($form->field_name_id != "") {
-	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
-	          $from_name = $_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
-	        }
-	        if ($form->field_email_id != "") {
-	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
-	          $user_email = $_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
-	        }
-	        if ($form->field_subject_id != "") {
-	          $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
-	          if (isset($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))])) {
-	            $subject .= " - ".$_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))];
-	          }
-	        }
+          $subject = $form->subject;
+          $from_name = "";
+          $user_email = "";
+          if ($form->field_name_id != "") {
+            $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
+            $from_name = esc_html($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
+          }
+          if ($form->field_email_id != "") {
+            $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
+            $user_email = esc_html($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
+          }
+          if ($form->field_subject_id != "") {
+            $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
+            if (isset($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))])) {
+              $subject .= " - ".esc_html($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
+            }
+          }
 
-					if ($form->confirmation_from_email != "") {
-						$from_email = $form->confirmation_from_email;
-					}
+          if ($form->confirmation_from_email != "") {
+            $from_email = $form->confirmation_from_email;
+          }
 
-	        // Send Email.
-	        $cc_emails = $form->to_cc_email;
-	        if ($user_email != "" && $form->send_confirmation_email) {
-	          if ($cc_emails == "") {
-	            $cc_emails .= $user_email;
-	          } else {
-	            $cc_emails .= ", ".$user_email;
-	          }
-	        }
-	        if ($cc_emails == "") {
-	          $cc_emails .= $from_email;
-	        } else {
-	          $cc_emails .= ", ".$from_email;
-	        }
+          // Send Email.
+          $cc_emails = $form->to_cc_email;
+          if ($user_email != "" && $form->send_confirmation_email) {
+            if ($cc_emails == "") {
+              $cc_emails .= $user_email;
+            } else {
+              $cc_emails .= ", ".$user_email;
+            }
+          }
+          if ($cc_emails == "") {
+            $cc_emails .= $from_email;
+          } else {
+            $cc_emails .= ", ".$from_email;
+          }
 
-	        // Rip up $attachment_urls so we're left with only the paths to the files uploaded.
-	        $smtp_attachment_urls = array();
-	        foreach ($attachment_urls as $attach_url) {
-	          $temp = explode("=>", $attach_url);
-	          array_push($smtp_attachment_urls, $temp[1]);
-	        }
+          // Rip up $attachment_urls so we're left with only the paths to the files uploaded.
+          $smtp_attachment_urls = array();
+          foreach ($attachment_urls as $attach_url) {
+            $temp = explode("=>", $attach_url);
+            array_push($smtp_attachment_urls, $temp[1]);
+          }
 
-					$secure_algorithms = array();
-					if (get_option("a_forms_enable_tls")) {
-						$secure_algorithms["tls"] = "tls";
-					}
-					if (get_option("a_forms_enable_ssl")) {
-						$secure_algorithms["ssl"] = "ssl";
-					}
+          $secure_algorithms = array();
+          if (get_option("a_forms_enable_tls")) {
+            $secure_algorithms["tls"] = "tls";
+          }
+          if (get_option("a_forms_enable_ssl")) {
+            $secure_algorithms["ssl"] = "ssl";
+          }
 
-	        $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
-	        
-	        if ($mail_message == "<div class='success'>Message sent!</div>") {
+          $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $smtp_attachment_urls, get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
+          
+          if ($mail_message == "<div class='success'>Message sent!</div>") {
 
-	          if ($form->success_message != "") {
-	            $mail_message = "<div class='success'>".$form->success_message."</div>";
-	          }
+            if ($form->success_message != "") {
+              $mail_message = "<div class='success'>".$form->success_message."</div>";
+            }
 
-	          if ($form->tracking_enabled) {
-	            tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $_POST["send_a_form"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));  
-	          }        
+            if ($form->tracking_enabled) {
+              tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => esc_html($_POST["send_a_form"]), "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));  
+            }        
 
-	          if ($form->success_redirect_url != "") {
-	            tom_javascript_redirect_to($form->success_redirect_url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
-	          }
+            if ($form->success_redirect_url != "") {
+              tom_javascript_redirect_to($form->success_redirect_url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+            }
 
-	        } else {
-	          if ($form->tracking_enabled) {
-	            tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $_POST["send_a_form"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));
-	          }
-	        }          
+          } else {
+            if ($form->tracking_enabled) {
+              tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => esc_html($_POST["send_a_form"]), "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));
+            }
+          }          
 
-	        $return_content .= $mail_message;
-	      }
-	    } else {
+          $return_content .= $mail_message;
+        }
+      } else {
 
         // Check to see if the input field values are valid, but not the wpnonce value.
         if ($form_valid && $captcha_valid && $nonce_passed == false) {
           // The input field values are valid except the wpnonce value. Therefore there must have been a cross site spam attack. So display fail send email message.
           $return_content .= "<div class='a-form error'>Failed to send your message. Please try again later.</div>";
         }
-	      $form_valid = false;
+        $form_valid = false;
 
-	    }
+      }
 
-	  }
-	  
+    }
+    
     $aform_form_nonce = wp_create_nonce( "a-forms-contact-a-form" );
-	  $return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form' enctype='multipart/form-data'>";
+    $return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form' enctype='multipart/form-data'>";
 
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
-	  $return_content .= "<fieldset>";
-	  // Get next section
-	  if ($_POST["action"] == "Next") {
-	    if ($form_valid) {
-	      $section_index++;
-	    } 
-	  }
+    $return_content .= "<fieldset>";
+    // Get next section
+    if (esc_html($_POST["action"]) == "Next") {
+      if ($form_valid) {
+        $section_index++;
+      } 
+    }
 
-	  // Get previous section.
-	  if ($_POST["action"] == "Back") {
-	    $section_index--;
-	  }
+    // Get previous section.
+    if (esc_html($_POST["action"]) == "Back") {
+      $section_index--;
+    }
 
-	  $section = $sections[$section_index];
+    $section = $sections[$section_index];
 
-	  // Navigate through all the other sections and make all fields hidden.
-	  $hidden_fields = tom_get_results("a_form_fields", "*", "form_id = '".$atts["id"]."' AND section_id <> '".$section->ID."'");
-	  foreach ($hidden_fields as $field) {
-	    $field_name = str_replace(" ", "_", strtolower($field->field_label));
-	    ob_start();
-	    
-	    if ($field->field_type == "checkbox") {
-	      $i = 0;
-	      foreach (explode(",", $field->value_options) as $key) {
-	        tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name."_".$i, $form_name.$field_name."_".$i, array(), "p", array(), array());  
-	        $i++;
-	      }
-	    } else {
+    // Navigate through all the other sections and make all fields hidden.
+    $hidden_fields = tom_get_results("a_form_fields", "*", "form_id = '".$atts["id"]."' AND section_id <> '".$section->ID."'");
+    foreach ($hidden_fields as $field) {
+      $field_name = str_replace(" ", "_", strtolower($field->field_label));
+      ob_start();
+      
+      if ($field->field_type == "checkbox") {
+        $i = 0;
+        foreach (explode(",", $field->value_options) as $key) {
+          tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name."_".$i, $form_name.$field_name."_".$i, array(), "p", array(), array());  
+          $i++;
+        }
+      } else {
 
-	      tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name, $form_name.$field_name, array(), "p", array(), array());
-	      
-	    }
-	    
-	    $return_content .= ob_get_contents();
-	    ob_end_clean();
-	  }
+        tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name, $form_name.$field_name, array(), "p", array(), array());
+        
+      }
+      
+      $return_content .= ob_get_contents();
+      ob_end_clean();
+    }
 
-	  $input_attachment_urls = "";
+    $input_attachment_urls = "";
 
-	  if (count($attachment_urls) > 0) {
-	    $attachment_urls = array_filter( $attachment_urls, 'strlen' );
-	    $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
-	  }
+    if (count($attachment_urls) > 0) {
+      $attachment_urls = array_filter( $attachment_urls, 'strlen' );
+      $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
+    }
 
-	  $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
+    $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
 
-	  $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
+    $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
 
-	  // Render form fields.
-	  if ($form->show_section_names) {
-	    $return_content .= "<legend>".$section->section_name."</legend>";
-	  }
+    // Render form fields.
+    if ($form->show_section_names) {
+      $return_content .= "<legend>".$section->section_name."</legend>";
+    }
 
-	  foreach ($fields as $field) {
-	    $field_name = str_replace(" ", "_", strtolower($field->field_label));
-	    $value_options = array();
-	    if ($field->value_options != "") {
-	      $options = explode(",", $field->value_options);
-	      foreach($options as $option_with_label) {
-	        $temp_array = explode(":", $option_with_label);
-	        $option = $temp_array[1];
-	        $value = $temp_array[0];
-	        if ($option == "") {
-	          $option = $value;
-	        }
-	        $value_options[$option] = $value;
-	      }
-	    }
-	    $field_label = $field->field_label;
-	    if (preg_match("/required/",$validation_array[$form_name.$field_name])) {
-	      $field_label .= "<abbr title='required'>*</abbr>";
-	    }
+    foreach ($fields as $field) {
+      $field_name = str_replace(" ", "_", strtolower($field->field_label));
+      $value_options = array();
+      if ($field->value_options != "") {
+        $options = explode(",", $field->value_options);
+        foreach($options as $option_with_label) {
+          $temp_array = explode(":", $option_with_label);
+          $option = $temp_array[1];
+          $value = $temp_array[0];
+          if ($option == "") {
+            $option = $value;
+          }
+          $value_options[$option] = $value;
+        }
+      }
+      $field_label = $field->field_label;
+      if (preg_match("/required/",$validation_array[$form_name.$field_name])) {
+        $field_label .= "<abbr title='required'>*</abbr>";
+      }
 
-	    ob_start();
-	    if ($field->field_type == "file" && $field->file_ext_allowed != "") {
-	      echo("<div>");
-	    } 
-			$error_class = "";
-			if (isset($_SESSION[$form_name.$field_name."_error"])) {
-				$error_class = "error";
-			}
-	    tom_add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
-	    if ($field->field_type == "file" && $field->file_ext_allowed != "") {
-	      $extensions_allowed = $field->file_ext_allowed;
-	      $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);
-	      $extensions_allowed = preg_replace('/(\s)+$/', '', $extensions_allowed);
-	      $extensions_allowed = preg_replace('/(\s)/', ', ', $extensions_allowed);
-	      $extensions_allowed = preg_replace('/ \.([a-z|A-Z])*$/', ' and $0', $extensions_allowed);
-	      $extensions_allowed = preg_replace('/,(\s)+and/', ' and', $extensions_allowed);
-	      echo("<span class='file-ext-allowed'>Can only accept: ".$extensions_allowed."</span>");
-	      echo("</div>");
-	    }
+      ob_start();
+      if ($field->field_type == "file" && $field->file_ext_allowed != "") {
+        echo("<div>");
+      } 
+      $error_class = "";
+      if (isset($_SESSION[$form_name.$field_name."_error"])) {
+        $error_class = "error";
+      }
+      tom_add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
+      if ($field->field_type == "file" && $field->file_ext_allowed != "") {
+        $extensions_allowed = $field->file_ext_allowed;
+        $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);
+        $extensions_allowed = preg_replace('/(\s)+$/', '', $extensions_allowed);
+        $extensions_allowed = preg_replace('/(\s)/', ', ', $extensions_allowed);
+        $extensions_allowed = preg_replace('/ \.([a-z|A-Z])*$/', ' and $0', $extensions_allowed);
+        $extensions_allowed = preg_replace('/,(\s)+and/', ' and', $extensions_allowed);
+        echo("<span class='file-ext-allowed'>Can only accept: ".$extensions_allowed."</span>");
+        echo("</div>");
+      }
 
-	    $return_content .= ob_get_contents();
-	    ob_end_clean();
-	  }
-	  
-	  $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
+      $return_content .= ob_get_contents();
+      ob_end_clean();
+    }
+    
+    $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
 
-	  // Add action buttons
-	  // Check if more then one section
-	  if (count($sections) > 1) {
-	    // There is more then one section.
+    // Add action buttons
+    // Check if more then one section
+    if (count($sections) > 1) {
+      // There is more then one section.
 
-	    if (($section_index+1) == count($sections)) {
-	      // Looking at the last section.
-	      $return_content .= render_a_form_submit_html($form);
-	    } else {
-	      // Not looking at the last section.
-	      $return_content .= "<input type='submit' name='action' value='Next' class='next'/>";
-	    }
+      if (($section_index+1) == count($sections)) {
+        // Looking at the last section.
+        $return_content .= render_a_form_submit_html($form);
+      } else {
+        // Not looking at the last section.
+        $return_content .= "<input type='submit' name='action' value='Next' class='next'/>";
+      }
 
-	  } else {
-	    // Only one section.
-	    $return_content .= render_a_form_submit_html($form);
-	  }
+    } else {
+      // Only one section.
+      $return_content .= render_a_form_submit_html($form);
+    }
 
-	  // Check which section your currently looking at.
-	  if ($section_index > 0) {
-	    // Not looking at the first section.
-	    $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
-	  }
+    // Check which section your currently looking at.
+    if ($section_index > 0) {
+      // Not looking at the first section.
+      $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
+    }
 
-	  return $return_content."</div></fieldset></form>";
+    return $return_content."</div></fieldset></form>";
 
-	}
+  }
 }
 
 function render_a_form_submit_html($form) {
