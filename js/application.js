@@ -13,6 +13,17 @@ jQuery(function() {
   show_hide_captcha_type();
   jQuery("#include_captcha_include_captcha_1").click(show_hide_captcha_type);
 
+  jQuery(document).delegate(".shiftable .delete", "click", function() {
+    var this_record = jQuery(this);
+    jQuery.ajax({
+      type: 'GET',
+      url: jQuery(this).attr("href")
+    }).success(function() {
+      this_record.parents(".shiftable:first").remove();
+    });
+    return false;
+  });
+
   jQuery(document).delegate(".delete-option", "click", function() {
     jQuery(this).parent().addClass("deleted");
     new_options = [];
@@ -214,11 +225,23 @@ function sort_fields() {
       });
       section_sort_order++;
     } 
-    jQuery.ajax({
-      type: 'POST',
-      url: AFormsAjax.sort_field_url,
-      data: {FID: jQuery(this).attr("id"), field_order: jQuery(this).index(), section_id: section_id}
-    });
     jQuery(this).find("input.section_id").val(section_id);
+  });
+
+  var index = 0;
+  jQuery("#fields_sortable > li.shiftable ul.options input[type=checkbox], #fields_sortable > li.shiftable ul.options input[type=hidden]").each(function(i) {
+    index = parseInt(jQuery(this).parents("li.shiftable:first").index()-1);
+    jQuery(this).parents("li.shiftable:first").find(".field_order").val(parseInt(index+1));
+    if (jQuery(this).attr("name")) {
+      jQuery(this).attr("name", jQuery(this).attr("name").replace(/\[\d*\]/, "["+index+"]"));
+    }
+    if (jQuery(this).attr("id")) {
+      jQuery(this).attr("id", jQuery(this).attr("id").replace(/_\d*_/, "_"+index+"_"));
+    }
+    if (jQuery(this).parent().find("label")) {
+      jQuery(this).parent().find("label").attr("for",
+        jQuery(this).parent().find("label").attr("for").replace(/_\d*_/, "_"+index+"_")
+      );
+    }
   });
 }

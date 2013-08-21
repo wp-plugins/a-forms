@@ -20,6 +20,7 @@ final class AFormFields {
               "section_id" => $_POST["section_id"][$index],
               "field_label" => $_POST["field_label"][$index],
               "field_type" => $_POST["field_type"][$index],
+              "field_order" => $_POST["field_order"][$index],
               "validation" => $_POST["validation_0"][$index]." ".$_POST["validation_1"][$index],
               "value_options" => $_POST["value_options"][$index],
               "file_ext_allowed" => tom_get_query_string_value("file_ext_allowed", $index)
@@ -61,6 +62,7 @@ final class AFormFields {
       $placeholder = "ph_";
     }
     tom_add_form_field($instance, "hidden", "FID", $placeholder."FID", $placeholder."FID", array("class" => "fid"), "span", array(), array(), $index);  
+    tom_add_form_field($instance, "hidden", "field_order", $placeholder."field_order", $placeholder."field_order", array("class" => "field_order"), "span", array(), array(), $index); 
     tom_add_form_field($instance, "hidden", "Section ID", $placeholder."section_id", $placeholder."section_id", array("class" => "section_id"), "span", array(), array(), $index);  
     tom_add_form_field($instance, "text", "Label", $placeholder."field_label", $placeholder."field_label", array("class" => "text"), "span", array(), array(), $index);  
     tom_add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "select" => "select", "textarea" => "textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);

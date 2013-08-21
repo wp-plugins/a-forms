@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.4.4 = 
+
+* Fixed issue with adding fields to the form. In previous versions it was slower, options were forgotten or given to something else, when the fields were rearranged. Now even if you rearrange the fields, it can work out those past problems.
 
 = 1.4.3 =
 
@@ -94,6 +98,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.4.4 = 
+
+* Fixed issue with adding fields to the form. In previous versions it was slower, options were forgotten or given to something else, when the fields were rearranged. Now even if you rearrange the fields, it can work out those past problems.
 
 = 1.4.3 =
 
