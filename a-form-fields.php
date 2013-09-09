@@ -65,7 +65,7 @@ final class AFormFields {
     tom_add_form_field($instance, "hidden", "field_order", $placeholder."field_order", $placeholder."field_order", array("class" => "field_order"), "span", array(), array(), $index); 
     tom_add_form_field($instance, "hidden", "Section ID", $placeholder."section_id", $placeholder."section_id", array("class" => "section_id"), "span", array(), array(), $index);  
     tom_add_form_field($instance, "text", "Label", $placeholder."field_label", $placeholder."field_label", array("class" => "text"), "span", array(), array(), $index);  
-    tom_add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "select" => "select", "textarea" => "textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);
+    tom_add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "hidden" => "hidden", "select" => "select", "textarea" => "textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);
     ?>
     <ul class="validation-controls">
       <?php tom_add_form_field($instance, "checkbox", "", $placeholder."validation", $placeholder."validation", array(), "li", array(), array("required" => "required", "email" => "email"), $index); ?>

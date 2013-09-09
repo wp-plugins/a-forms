@@ -731,7 +731,7 @@ function a_form_shortcode($atts) {
       }
 
       // Construct email content.
-      $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
+      $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'", array("field_order"));
       foreach ($all_fields as $field) {
         $field_name = str_replace(" ", "_", strtolower($field->field_label));
 
