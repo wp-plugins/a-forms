@@ -104,7 +104,7 @@ function a_forms_activate() {
       FID mediumint(9) NOT NULL AUTO_INCREMENT, 
       field_type VARCHAR(255) DEFAULT '',
       field_label VARCHAR(255) DEFAULT '', 
-      value_options VARCHAR(255) DEFAULT '',
+      value_options longtext DEFAULT '',
       field_order mediumint(9) NOT NULL DEFAULT 0, 
       validation VARCHAR(255) DEFAULT '',
       file_ext_allowed VARCHAR(255) DEFAULT '',
