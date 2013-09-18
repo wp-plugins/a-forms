@@ -364,10 +364,10 @@ function a_form_shortcode($atts) {
       $form_valid = AFormValidation::is_valid($atts);
       
       // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
+      $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+      $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
       if (isset($_POST["action"]) && $_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
-
         $captcha_valid = AFormValidation::is_valid_captcha($atts);
-
       }
       
       // Check to see if form is valid.
