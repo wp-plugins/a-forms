@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.4.4
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.5 =
+
+* Refactored the code to make it more efficient and easier to manage. Should make it easier to make changes in the future.
 
 = 1.4.4 = 
 
@@ -98,6 +102,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.5 =
+
+* Refactored the code to make it more efficient and easier to manage. Should make it easier to make changes in the future.
 
 = 1.4.4 = 
 

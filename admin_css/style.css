@@ -86,6 +86,10 @@ li.shiftable.even, table tbody tr.even td {
 	background: #dfdfdf;
 }
 
+#settings_form li.shiftable.odd, #settings_form table tbody tr.odd td, #settings_form li.shiftable.even, #settings_form table tbody tr.even td {
+	background: none;
+}
+
 li.shiftable.odd.section-heading, li.shiftable.even.section-heading {
 	background: none;
 }

@@ -74,7 +74,7 @@ jQuery(function() {
     	jQuery("#fields_sortable > li:last").attr("id", tmp[1]);
       jQuery("#fields_sortable > li:last input.fid").val(tmp[1]);
       jQuery("#fields_sortable > li:last input.section_id").val(tmp[0]);
-      jQuery(row).find(".delete").attr("href", AFormsAjax.base_url + "&action=delete&a_form_page=section&fid="+tmp[1]+"&section_id="+tmp[0]);
+      jQuery(row).find(".delete").attr("href", AFormsAjax.base_url + "&action=delete&controller=AFormSections&fid="+tmp[1]+"&section_id="+tmp[0]);
       sort_fields();
     });
     jQuery("#fields_sortable > li:not(.shiftable)").remove();
