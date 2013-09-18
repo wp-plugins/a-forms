@@ -35,6 +35,9 @@ final class AFormValidation {
         }
       }
     }
+
+    echo "CACPPPPPPP";
+    echo var_dump($captcha_valid);
     return $captcha_valid;
   }
 
