@@ -4,7 +4,7 @@ final class AdminAFormsController {
 		$forms = tom_get_results("a_form_forms", "*", "");
     if (count($forms) == 0) {
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
-      tom_javascript_redirect_to($url, "<p>Start by creating a form.</p>");
+      echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     } else {
     	AdminAFormsPage::indexPage();
     }
@@ -41,7 +41,7 @@ final class AdminAFormsController {
           $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Update Complete";
         }
         
-        tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+        echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
         exit;
       }
       
@@ -94,7 +94,7 @@ final class AdminAFormsController {
         ), "ID", $form_id);
 
         $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Created";
-        tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+        echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
         exit;
       }
 
@@ -108,7 +108,7 @@ final class AdminAFormsController {
     tom_delete_record_by_id("a_form_sections", "form_id", $_GET["id"]);
     tom_delete_record_by_id("a_form_fields", "form_id", $_GET["id"]);
     $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Deleted";
-    tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+    echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     exit;
 	}
 

@@ -96,7 +96,7 @@ final class AFormController {
       }        
 
       if ($form->success_redirect_url != "") {
-        tom_javascript_redirect_to($form->success_redirect_url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+        echo("<meta http-equiv='refresh' content='0;url=".$form->success_redirect_url."/'>");
       }
 
     } else {

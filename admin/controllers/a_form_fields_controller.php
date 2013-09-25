@@ -48,8 +48,7 @@ final class AdminAFormFieldsController {
       tom_update_record_by_id("a_form_forms", array("field_subject_id" => ""), "field_subject_id", $_GET["fid"]);
       tom_delete_record_by_id("a_form_fields", "FID", $_GET["fid"]);
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&message=Record Deleted&id=".$_GET["form_id"]."";
-
-      tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+      echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     }
     exit;
 	}
