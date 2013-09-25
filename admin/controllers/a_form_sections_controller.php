@@ -19,7 +19,7 @@ final class AdminAFormSectionsController {
           $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form->ID."&message=Update Complete";
         }
         
-        tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+        echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
         exit;
       }
 
@@ -40,7 +40,7 @@ final class AdminAFormSectionsController {
 
       if ($valid) {
         $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Created&action=edit&id=".$_POST["form_id"]."";
-        tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+        echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
         exit;
       }
     }
@@ -57,7 +57,7 @@ final class AdminAFormSectionsController {
       tom_delete_record_by_id("a_form_fields", "section_id", $_GET["id"]);
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Deleted";
       
-      tom_javascript_redirect_to($url, "<p>Please <a href='$url'>Click Next</a> to continue.</p>");
+      echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     }
     exit;
 	}
