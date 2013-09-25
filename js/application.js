@@ -1,4 +1,25 @@
 jQuery(function() {
+
+  jQuery(document).delegate("form.a-form.ajaxified .next, form.a-form.ajaxified .prev, form.a-form.ajaxified .send", "click", function() {
+    var action = jQuery(this).val();
+      jQuery('#'+jQuery(this).parents("form").attr("id")).after("<img class='a-form-loading' src='"+AFormsAjax.base_url+"/wp-content/plugins/a-forms/images/progress.gif' />").find("fieldset.submit").hide();
+    var form_id = '#'+jQuery(this).parents("form").attr("id");
+    var options = { 
+        target: form_id,
+        data: {action: action},
+        success: function(responseText, statusText, xhr, $form) {
+          jQuery(".a-form-loading").remove();
+          jQuery(form_id).find("div.working").remove().find("fieldset.submit").show();
+        }
+    }; 
+    jQuery('#'+jQuery(this).parents("form").attr("id")).ajaxSubmit(options); 
+    
+    // !!! Important !!! 
+        // always return false to prevent standard browser submit and page navigation 
+    return false; 
+  });
+
+
   var optional_fields = ["select", "radio", "checkbox"];
   
   if (jQuery( "#fields_sortable" ).length > 0) {

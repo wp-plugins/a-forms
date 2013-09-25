@@ -1,16 +1,43 @@
 <?php
 final class AFormController {
 
-  public static function submitAction($atts) {
+  public static function formAction($atts) {
+    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $attachment_urls = array();
     if (isset($_POST["a_form_attachment_urls"]) && $_POST["a_form_attachment_urls"] != "") {
       $attachment_urls = explode("::", ($_POST["a_form_attachment_urls"]));
     }
+    $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
+    foreach ($all_fields as $field) {
+      $field_name = str_replace(" ", "_", strtolower($field->field_label));
+
+      if ($field->field_type == "file") {
+        // Upload file.
+        try {
+          $filedst = AFormHelper::upload_file($form_name.$field_name, $field->file_ext_allowed);
+          // Set global variable to have location so that if this is the last section, the system will know which file was just uploaded.
+          $GLOBALS["upload_".$form_name.$field_name] = $filedst;
+          array_push($attachment_urls, $form_name.$field_name."=>".$filedst);
+        } catch(Exception $ex) {
+          $_SESSION[$form_name.$field_name."_error"] = $ex->getMessage();
+          throw new Exception($ex->getMessage());
+        }
+        
+      }
+    }
+
+    return $attachment_urls;
+  }
+
+  public static function submitAction($atts) {
+    $current_datetime = gmdate( 'Y-m-d H:i:s');
     $email_content = AFormHelper::create_email_content($atts);
     $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
-    // User clicked Send, so since form is valid and they click Send, send the email.
+    $field_values = $GLOBALS["a_form_field_values"];
 
+    // User clicked Send, so since form is valid and they click Send, send the email.
     $subject = $form->subject;
     $from_name = "";
     $user_email = "";
@@ -65,7 +92,7 @@ final class AFormController {
       }
 
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => ($_POST["send_a_form"]), "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));  
+        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));  
       }        
 
       if ($form->success_redirect_url != "") {
@@ -74,7 +101,7 @@ final class AFormController {
 
     } else {
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => ($_POST["send_a_form"]), "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));
+        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));
       }
     }
 

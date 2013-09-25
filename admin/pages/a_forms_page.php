@@ -100,9 +100,11 @@ final class AdminAFormsPage {
       
       tom_add_form_field($instance, "checkbox", "Tracking", "tracking_enabled", "tracking_enabled", array(), "p", array(), array("1" => "Enabled"));
 
+      tom_add_form_field($instance, "checkbox", "Ajax", "enable_ajax", "enable_ajax", array(), "p", array(), array("1" => "Enabled"));  
+
       tom_add_form_field($instance, "checkbox", "Captcha", "include_captcha", "include_captcha", array(), "p", array(), array("1" => "Include Before Send Button"));
 
-      tom_add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), array("0" => "Securimage Captcha", "1" => "Math Captcha"));
+      tom_add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), array("0" => "Securimage Captcha", "1" => "Math Captcha"));    
 
 	  ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />

@@ -1,15 +1,14 @@
 <?php
 final class AFormHelper {
+
+  // Creates an email as text, records which files were uploaded and returns the email as a string.
+  // Add the fields submitted into a global variable called "a_form_field_values".
+  // Add the file names uploaded into a global variable called "smtp_attachment_urls".
 	public static function create_email_content($atts) {
     $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $field_values = array();
-    $attachment_urls = array();
-
-    if (isset($_POST["a_form_attachment_urls"]) && $_POST["a_form_attachment_urls"] != "") {
-      $attachment_urls = explode("::", ($_POST["a_form_attachment_urls"]));
-    }
-
+    $smtp_attachment_urls = array();
     // Construct email content.
     $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'", array("field_order"));
     foreach ($all_fields as $field) {
@@ -31,26 +30,22 @@ final class AFormHelper {
         $email_content .= "\n\n";
         $field_values[$field_name] = $answers;
       } else if ($field->field_type == "file") {
-        // Upload file.
 
-        try {
-          $filedst = AFormHelper::upload_file($form_name.$field_name, $field->file_ext_allowed);
-          array_push($attachment_urls, $form_name.$field_name."=>".$filedst);
-        } catch(Exception $ex) {
-          $form_valid = false;
-          $_SESSION[$form_name.$field_name."_error"] = $ex->getMessage();
+        if (isset($GLOBALS["upload_".$form_name.$field_name])) {
+          // This file was just uploaded.
+          array_push($smtp_attachment_urls, $GLOBALS["upload_".$form_name.$field_name]);
+          $field_values[$field_name] = $GLOBALS["upload_".$form_name.$field_name];
         }
-        
-        if ($filedst != "") {
-          $field_values[$field_name] = $filedst;
-        } else {
-          if (($_POST["a_form_attachment_urls"]) != "") {
-            $records = explode("::", ($_POST["a_form_attachment_urls"]));
-            foreach ($records as $record) {
-              $key_value = explode("=>", $record);
-              if ($key_value[0] == $form_name.$field_name && $key_value[1] != "") {
-                $field_values[$field_name] = $key_value[1];
-              }
+
+        // These files may have been uploaded in a previous section.
+        // Rip up $attachment_urls so we're left with only the paths to the files uploaded.
+        if (($_POST["a_form_attachment_urls"]) != "") {
+          $records = explode("::", ($_POST["a_form_attachment_urls"]));
+          foreach ($records as $record) {
+            $key_value = explode("=>", $record);
+            if ($key_value[0] == $form_name.$field_name && $key_value[1] != "") {
+              array_push($smtp_attachment_urls, $key_value[1]);
+              $field_values[$field_name] = $key_value[1];
             }
           }
         }
@@ -63,13 +58,9 @@ final class AFormHelper {
       }
       
     }
-    // Rip up $attachment_urls so we're left with only the paths to the files uploaded.
-    $smtp_attachment_urls = array();
-    foreach ($attachment_urls as $attach_url) {
-      $temp = explode("=>", $attach_url);
-      array_push($smtp_attachment_urls, $temp[1]);
-    }
-    $GLOBALS["smtp_attachment_urls"] = $smtp_attachment_urls;
+
+    $GLOBALS["a_form_field_values"] = $field_values;
+    $GLOBALS["smtp_attachment_urls"] = array_unique($smtp_attachment_urls);
     return $email_content;
   }
 

@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5
+Version: 1.5.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -130,6 +130,12 @@ function a_forms_activate() {
     )";
     $wpdb->query($sql);
 
+  }
+
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'enable_ajax'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD enable_ajax VARCHAR(1)";
+    $wpdb->query($sql); 
   }
 
   $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'include_admin_in_emails'");
@@ -346,6 +352,17 @@ function a_form_router() {
   
 }
 
+add_action("init", "a_form_ajax_responder");
+function a_form_ajax_responder() {
+  if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    if (isset($_POST["send_a_form"]) && $_POST["send_a_form"] != "") {
+      $atts = array("id" => $_POST["send_a_form"]);
+      echo a_form_shortcode($atts);
+      exit;
+    }
+  }
+}
+
 add_shortcode( 'a-form', 'a_form_shortcode' );
 
 function a_form_shortcode($atts) {
@@ -356,6 +373,7 @@ function a_form_shortcode($atts) {
     $nonce_passed = true;
     $mail_message = "";
     $return_content = "";
+    $attachment_urls = array();
     
     // Check to see if User submits a form action.
     if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
@@ -373,6 +391,12 @@ function a_form_shortcode($atts) {
       // Check to see if form is valid.
       $nonce_passed = wp_verify_nonce($_REQUEST["_wpnonce"], "a-forms-contact-a-form");
       if ($nonce_passed && $form_valid && $captcha_valid) {
+        try {
+          $attachment_urls = AFormController::formAction($atts);
+        } catch(Exception $e) {
+          $form_valid = false;
+        }
+        
         // Form is valid.
         if (($_POST["action"]) == "Send") {
           $mail_message = AFormController::submitAction($atts);
@@ -390,7 +414,7 @@ function a_form_shortcode($atts) {
 
     }
 
-    return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid);
+    return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
 
   }
 }
@@ -426,8 +450,15 @@ add_action('wp_head', 'add_a_forms_js_and_css');
 function add_a_forms_js_and_css() { 
   wp_enqueue_script('jquery');
 
+  wp_register_script("a-forms-ajax-form", plugins_url("/js/jquery-form.js", __FILE__));
+  wp_enqueue_script("a-forms-ajax-form");
+
   wp_register_script("a-forms", plugins_url("/js/application.js", __FILE__));
   wp_enqueue_script("a-forms");
+
+  wp_localize_script( 'a-forms', 'AFormsAjax', array(
+    "base_url" => get_option('siteurl'),
+  ));
 
   wp_register_style("a-forms", get_template_directory_uri().'/aforms_css/'.get_option("aform_current_css_file"));
   wp_enqueue_style("a-forms");

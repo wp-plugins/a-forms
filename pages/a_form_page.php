@@ -1,6 +1,6 @@
 <?php
 final class AFormPage {
-	public static function render_form($atts, $return_content, $form_valid) {
+	public static function render_form($atts, $return_content, $form_valid, $attachment_urls) {
     $aform_form_nonce = wp_create_nonce( "a-forms-contact-a-form" );
 		$form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
@@ -14,8 +14,16 @@ final class AFormPage {
 
     // Get this section.
     $section = $sections[$section_index];
-		$return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form' enctype='multipart/form-data'>";
+    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+      // If not a ajax request.
+      $ajax_class = "";
+      if ($form->enable_ajax == "1") {
+        $ajax_class = "ajaxified";
+      }
 
+      $return_content .= "<form action='' id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form $ajax_class' enctype='multipart/form-data'>";
+    }
+		
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
     $return_content .= "<fieldset>";
     // Get next section
@@ -53,15 +61,6 @@ final class AFormPage {
       $return_content .= ob_get_contents();
       ob_end_clean();
     }
-
-    $input_attachment_urls = "";
-
-    if (count($attachment_urls) > 0) {
-      $attachment_urls = array_filter( $attachment_urls, 'strlen' );
-      $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
-    }
-
-    $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
 
     $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
 
@@ -113,6 +112,14 @@ final class AFormPage {
       $return_content .= ob_get_contents();
       ob_end_clean();
     }
+
+    $input_attachment_urls = "";
+    if (count($attachment_urls) > 0) {
+      $attachment_urls = array_filter( $attachment_urls, 'strlen' );
+      $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
+    }
+    $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
+
     
     $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
 
@@ -140,8 +147,14 @@ final class AFormPage {
       $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
     }
 
-    return $return_content."</div></fieldset></form>";
+    $return_content .= "</div></fieldset>";
 
+
+    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+      $return_content .= "</form>";
+    }
+
+    return $return_content;
 	}
 
 	function render_a_form_submit_html($form) {
