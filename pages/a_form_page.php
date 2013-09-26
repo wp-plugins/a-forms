@@ -130,7 +130,7 @@ final class AFormPage {
 
       if (($section_index+1) == count($sections)) {
         // Looking at the last section.
-        $return_content .= AFormPage::render_a_form_submit_html($form);
+        $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
       } else {
         // Not looking at the last section.
         $return_content .= "<input type='submit' name='action' value='Next' class='next'/>";
@@ -138,7 +138,7 @@ final class AFormPage {
 
     } else {
       // Only one section.
-      $return_content .= AFormPage::render_a_form_submit_html($form);
+      $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
     }
 
     // Check which section your currently looking at.
@@ -157,13 +157,17 @@ final class AFormPage {
     return $return_content;
 	}
 
-	function render_a_form_submit_html($form) {
+	function render_a_form_submit_html($form, $form_name) {
 	  $return_content = "";
 	  if ($form->include_captcha) {
+      $error_class = "";
+      if (isset($_SESSION[$form_name."captcha_error"])) {
+        $error_class = "error";
+      }
 	    ob_start();
 	    if ($form->captcha_type == "0") {
 
-	      tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
+	      tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 
 	    } else {
 
@@ -175,7 +179,7 @@ final class AFormPage {
 	        , array(), "div", array());
 	      tom_add_form_field(null, "hidden", "Second number", AFormPage::aform_field_name($form, "captcha_second_number"), AFormPage::aform_field_name($form, "captcha_second_number"), array(), "div", array());
 
-	      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
+	      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 	    }
 	    $return_content .= ob_get_contents();
 	    ob_end_clean();

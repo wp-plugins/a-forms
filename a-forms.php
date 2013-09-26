@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.1
+Version: 1.5.2
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -417,33 +417,6 @@ function a_form_shortcode($atts) {
     return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
 
   }
-}
-
-function render_a_form_submit_html($form) {
-  $return_content = "";
-  if ($form->include_captcha) {
-    ob_start();
-    if ($form->captcha_type == "0") {
-
-      tom_add_form_field(null, "captcha", "Captcha", aform_field_name($form, "captcha"), aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
-
-    } else {
-
-      $first_number = $_POST[aform_field_name($form, "captcha_first_number")] = rand(1, 20);
-      $second_number = $_POST[aform_field_name($form, "captcha_second_number")] = rand(1, 20);
-
-      tom_add_form_field(null, "hidden", "First number", aform_field_name($form, "captcha_first_number"), 
-        aform_field_name($form, "captcha_first_number")
-        , array(), "div", array());
-      tom_add_form_field(null, "hidden", "Second number", aform_field_name($form, "captcha_second_number"), aform_field_name($form, "captcha_second_number"), array(), "div", array());
-
-      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, aform_field_name($form, "captcha"), aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha"));
-    }
-    $return_content .= ob_get_contents();
-    ob_end_clean();
-  }
-  $return_content .= "<input type='submit' name='action' value='Send' class='send'/>";
-  return $return_content;
 }
 
 add_action('wp_head', 'add_a_forms_js_and_css');

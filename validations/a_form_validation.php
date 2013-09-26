@@ -28,12 +28,13 @@ final class AFormValidation {
           == ($_POST[aform_field_name($form, "captcha")])
         );
 
-        // Check to see if captcha is valid.
-        if ($captcha_valid == false) {
-          // Captcha is invalid, so display error message.
-          $_SESSION["a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha_error"] = "invalid captcha code, try again!";
-        }
       }
+    }
+
+    // Check to see if captcha is valid.
+    if ($captcha_valid == false) {
+      // Captcha is invalid, so display error message.
+      $_SESSION["a_form_".str_replace(" ", "_", strtolower($form->form_name))."_captcha_error"] = "invalid captcha code, try again!";
     }
 
     return $captcha_valid;
