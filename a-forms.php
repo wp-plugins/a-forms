@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.2
+Version: 1.5.3
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -351,6 +351,102 @@ function a_form_router() {
   }
   
 }
+
+
+add_action( 'widgets_init', 'aforms_register_form_widget' );
+
+/**
+ * Adds AFormFormWidget widget.
+ */
+class AFormFormWidget extends WP_Widget {
+
+  /**
+   * Register widget with WordPress.
+   */
+  function __construct() {
+    parent::__construct(
+      'aform_widget', // Base ID
+      __('A Form', 'a_form_widget'), // Name
+      array( 'description' => __( 'A widget that allows you to add your AForm to your sidebar', 'a_form_widget' ), ) // Args
+    );
+  }
+
+  /**
+   * Front-end display of widget.
+   *
+   * @see WP_Widget::widget()
+   *
+   * @param array $args     Widget arguments.
+   * @param array $instance Saved values from database.
+   */
+  public function widget( $args, $instance ) {
+    if ( isset( $instance[ 'a_form_selection' ] ) ) {
+      if ($instance[ 'a_form_selection' ] != "") {
+        $atts = array();
+        $a_form_selection = $instance[ 'a_form_selection' ];
+        $atts["id"] = $a_form_selection;
+        echo a_form_shortcode($atts);
+      }
+    }
+  }
+
+  /**
+   * Back-end widget form.
+   *
+   * @see WP_Widget::form()
+   *
+   * @param array $instance Previously saved values from database.
+   */
+  public function form( $instance ) {
+    if ( isset( $instance[ 'a_form_selection' ] ) ) {
+      $a_form_selection = $instance[ 'a_form_selection' ];
+    }
+    $aforms_list = tom_get_results("a_form_forms", "*", "");
+    ?>
+    <p>
+      <label for="<?php echo $this->get_field_id( 'a_form_selection' ); ?>">Select Form</label> 
+      <select id="<?php echo $this->get_field_id( 'a_form_selection' ); ?>" name="<?php echo $this->get_field_name( 'a_form_selection' ); ?>">
+        <option value=""></option>
+        <?php foreach ($aforms_list as $aform) { ?>
+          <option value="<?php echo($aform->ID); ?>" 
+          <?php 
+            if ($a_form_selection == $aform->ID) {
+              echo ("selected");
+            }
+          ?>
+          ><?php echo($aform->form_name); ?>
+        </option>
+        <?php }?>
+      </select>
+    </p>
+    <?php 
+  }
+
+  /**
+   * Sanitize widget form values as they are saved.
+   *
+   * @see WP_Widget::update()
+   *
+   * @param array $new_instance Values just sent to be saved.
+   * @param array $old_instance Previously saved values from database.
+   *
+   * @return array Updated safe values to be saved.
+   */
+  public function update( $new_instance, $old_instance ) {
+    $instance = array();
+    $instance['a_form_selection'] = ( ! empty( $new_instance['a_form_selection'] ) ) ? strip_tags( $new_instance['a_form_selection'] ) : '';
+
+    return $instance;
+  }
+
+} // class Foo_Widget
+
+function aforms_register_form_widget() {
+  register_widget( 'AFormFormWidget' );
+}
+
+
+
 
 add_action("init", "a_form_ajax_responder");
 function a_form_ajax_responder() {

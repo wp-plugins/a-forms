@@ -41,6 +41,8 @@ jQuery(function() {
       url: jQuery(this).attr("href")
     }).success(function() {
       this_record.parents(".shiftable:first").remove();
+      make_fields_sortable_odd_and_even_rows();
+      sort_fields();
     });
     return false;
   });
