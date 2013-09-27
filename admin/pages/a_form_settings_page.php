@@ -41,7 +41,7 @@ final class AdminAFormSettingsPage {
 		            <label for="a_forms_smtp_auth">Enable SMTP Authentication:</label>
 		          </th>
 		          <td>
-		            <input type="hidden" name="a_forms_smtp_auth" value="0">
+		            <input type="hidden" name="a_forms_smtp_auth" value="0" />
 		            <input type="checkbox" id="a_forms_smtp_auth" name="a_forms_smtp_auth" value="1" <?php if (get_option('a_forms_smtp_auth')) {echo "checked";} ?> />
 		          </td>
 		        </tr>
@@ -51,7 +51,7 @@ final class AdminAFormSettingsPage {
 		            <label for="a_forms_enable_tls">Enable TLS:</label>
 		          </th>
 		          <td>
-		            <input type="hidden" name="a_forms_enable_tls" value="0">
+		            <input type="hidden" name="a_forms_enable_tls" value="0" />
 		            <input type="checkbox" id="a_forms_enable_tls" name="a_forms_enable_tls" value="1" <?php if (get_option('a_forms_enable_tls')) {echo "checked";} ?> />
 		          </td>
 		        </tr>
@@ -61,7 +61,7 @@ final class AdminAFormSettingsPage {
 		            <label for="a_forms_enable_ssl">Enable SSL:</label>
 		          </th>
 		          <td>
-		            <input type="hidden" name="a_forms_enable_ssl" value="0">
+		            <input type="hidden" name="a_forms_enable_ssl" value="0" />
 		            <input type="checkbox" id="a_forms_enable_ssl" name="a_forms_enable_ssl" value="1" <?php if (get_option('a_forms_enable_ssl')) {echo "checked";} ?> />
 		          </td>
 		        </tr>
@@ -98,7 +98,7 @@ final class AdminAFormSettingsPage {
 		    </table>
 
 		    <p class="submit">
-		      <input type="submit" name="Submit" value="Update Settings">
+		      <input type="submit" name="Submit" value="Update Settings" />
 		    </p>
 
 		  </form>
