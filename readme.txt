@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Create easy contact forms.
 
 == Description ==
 
-A wordpress plugin that allows you to add a form on your website.
+A wordpress plugin that allows you to add a form on your website. It's quite easy to configure, some what like C Forms II, but you have the ability to get regular updates and its available on the Wordpress Plugin site.
 
 == Installation ==
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.5.4 =
+
+* Increased compatibility for Ajax across all IE versions. 1.5.3 seemed to be only good for IE10 for ajax.
 
 = 1.5.3 =
 
@@ -114,6 +118,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.5.4 =
+
+* Increased compatibility for Ajax across all IE versions. 1.5.3 seemed to be only good for IE10 for ajax.
 
 = 1.5.3 =
 

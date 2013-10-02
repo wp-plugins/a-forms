@@ -1,12 +1,12 @@
 <?php
 final class AFormPage {
-  public static function render_form($atts, $return_content, $form_valid, $attachment_urls) {
+	public static function render_form($atts, $return_content, $form_valid, $attachment_urls) {
     $aform_form_nonce = wp_create_nonce( "a-forms-contact-a-form" );
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+		$form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
     $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
-    if (isset($_POST["send_a_form_section"])) {
+		if (isset($_POST["send_a_form_section"])) {
       $section_index = ($_POST["send_a_form_section"]);
     } else {
       $section_index = 0;
@@ -14,7 +14,8 @@ final class AFormPage {
 
     // Get this section.
     $section = $sections[$section_index];
-    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+
+    if(!isset($_POST["aform_ajaxified_form"])) {
       // If not a ajax request.
       $ajax_class = "";
       if ($form->enable_ajax == "1") {
@@ -23,7 +24,9 @@ final class AFormPage {
 
       $return_content .= "<form id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form $ajax_class' enctype='multipart/form-data'>";
     }
-    
+		if ($form->enable_ajax == "1") {
+        $return_content .= "<input type='hidden' name='aform_ajaxified_form' value='1'/>";
+    }
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
     $return_content .= "<fieldset>";
     // Get next section
@@ -150,46 +153,46 @@ final class AFormPage {
     $return_content .= "</div></fieldset>";
 
 
-    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+    if(!isset($_POST["aform_ajaxified_form"])) {
       $return_content .= "</form>";
     }
 
     return $return_content;
-  }
+	}
 
-  function render_a_form_submit_html($form, $form_name) {
-    $return_content = "";
-    if ($form->include_captcha) {
+	function render_a_form_submit_html($form, $form_name) {
+	  $return_content = "";
+	  if ($form->include_captcha) {
       $error_class = "";
       if (isset($_SESSION[$form_name."captcha_error"])) {
         $error_class = "error";
       }
-      ob_start();
-      if ($form->captcha_type == "0") {
+	    ob_start();
+	    if ($form->captcha_type == "0") {
 
-        tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
+	      tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 
-      } else {
+	    } else {
 
-        $first_number = $_POST[AFormPage::aform_field_name($form, "captcha_first_number")] = rand(1, 20);
-        $second_number = $_POST[AFormPage::aform_field_name($form, "captcha_second_number")] = rand(1, 20);
+	      $first_number = $_POST[AFormPage::aform_field_name($form, "captcha_first_number")] = rand(1, 20);
+	      $second_number = $_POST[AFormPage::aform_field_name($form, "captcha_second_number")] = rand(1, 20);
 
-        tom_add_form_field(null, "hidden", "First number", AFormPage::aform_field_name($form, "captcha_first_number"), 
-          AFormPage::aform_field_name($form, "captcha_first_number")
-          , array(), "div", array());
-        tom_add_form_field(null, "hidden", "Second number", AFormPage::aform_field_name($form, "captcha_second_number"), AFormPage::aform_field_name($form, "captcha_second_number"), array(), "div", array());
+	      tom_add_form_field(null, "hidden", "First number", AFormPage::aform_field_name($form, "captcha_first_number"), 
+	        AFormPage::aform_field_name($form, "captcha_first_number")
+	        , array(), "div", array());
+	      tom_add_form_field(null, "hidden", "Second number", AFormPage::aform_field_name($form, "captcha_second_number"), AFormPage::aform_field_name($form, "captcha_second_number"), array(), "div", array());
 
-        tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
-      }
-      $return_content .= ob_get_contents();
-      ob_end_clean();
-    }
-    $return_content .= "<input type='submit' name='action' value='Send' class='send'/>";
-    return $return_content;
-  }
+	      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
+	    }
+	    $return_content .= ob_get_contents();
+	    ob_end_clean();
+	  }
+	  $return_content .= "<input type='submit' name='action' value='Send' class='send'/>";
+	  return $return_content;
+	}
 
-  function aform_field_name($form, $field_name) {
-    return "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_".$field_name;
-  }
+	function aform_field_name($form, $field_name) {
+	  return "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_".$field_name;
+	}
 }
 ?>

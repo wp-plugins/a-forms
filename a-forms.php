@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.3
+Version: 1.5.4
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -445,13 +445,14 @@ function aforms_register_form_widget() {
   register_widget( 'AFormFormWidget' );
 }
 
-
-
-
 add_action("init", "a_form_ajax_responder");
 function a_form_ajax_responder() {
-  if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+  // Check if $_POST["aform_ajaxified_form"] exists. If it does it means the A Form has been set up to use AJAX.
+  if(isset($_POST["aform_ajaxified_form"])) {
+    // Further checks to see if this really is an A Form post.
     if (isset($_POST["send_a_form"]) && $_POST["send_a_form"] != "") {
+      // It happens to be an A Form post. Not only that, but a A Form ajax post.
+      // So render A Form.
       $atts = array("id" => $_POST["send_a_form"]);
       echo a_form_shortcode($atts);
       exit;
