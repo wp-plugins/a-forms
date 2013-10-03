@@ -168,11 +168,11 @@ final class AFormPage {
         $error_class = "error";
       }
 	    ob_start();
-	    if ($form->captcha_type == "0") {
+	    if ($form->captcha_type == "1") {
 
 	      tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 
-	    } else {
+	    } else if ($form->captcha_type == "2") {
 
 	      $first_number = $_POST[AFormPage::aform_field_name($form, "captcha_first_number")] = rand(1, 20);
 	      $second_number = $_POST[AFormPage::aform_field_name($form, "captcha_second_number")] = rand(1, 20);
