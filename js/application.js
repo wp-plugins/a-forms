@@ -22,7 +22,7 @@ jQuery(function() {
       });
       field_hash["action"] = jQuery(this).val();
       var form_id = '#'+jQuery(this).parents("form.a-form").attr("id");
-      
+
       jQuery.ajax({
         type: "POST",
         url: window.location.href,
@@ -96,25 +96,25 @@ jQuery(function() {
     return false;
   });
 
-  jQuery("#new_form_row").click(function() {
-    var row = jQuery("#fields_row_clone li").clone().appendTo('#fields_sortable');
-    jQuery(row).find("input, select").each(function() {
-      jQuery(this).attr("name", jQuery(this).attr("name").replace("ph_", "")+"[]");
+	jQuery("#new_form_row").click(function() {
+		var row = jQuery("#fields_row_clone li").clone().appendTo('#fields_sortable');
+		jQuery(row).find("input, select").each(function() {
+			jQuery(this).attr("name", jQuery(this).attr("name").replace("ph_", "")+"[]");
       if (jQuery(this).attr("id")) {
         jQuery(this).attr("id", jQuery(this).attr("id").replace("ph_", "") + "_" + jQuery("#fields_sortable > li.shiftable").length);
       }
-    });
-    jQuery(row).find("label").each(function() {
+		});
+		jQuery(row).find("label").each(function() {
       jQuery(this).attr("for", jQuery(this).attr("for").replace("ph_", "") + "_" + jQuery("#fields_sortable > li.shiftable").length);
-    });
+		});
 
-    jQuery.ajax({
+		jQuery.ajax({
         type: "post",
         url: AFormsAjax.ajax_url,
         data: {section_id: jQuery("#fields_sortable li.section-heading:last").attr("id").replace("section_id_", ""), field_order: jQuery("#fields_sortable > li.shiftable").length, action: "add_field_to_section"}
     }).success(function(data) {
       var tmp = data.split("::");
-      jQuery("#fields_sortable > li:last").attr("id", tmp[1]);
+    	jQuery("#fields_sortable > li:last").attr("id", tmp[1]);
       jQuery("#fields_sortable > li:last input.fid").val(tmp[1]);
       jQuery("#fields_sortable > li:last input.section_id").val(tmp[0]);
       jQuery(row).find(".delete").attr("href", AFormsAjax.base_url + "&action=delete&controller=AFormSections&fid="+tmp[1]+"&section_id="+tmp[0]);
@@ -123,8 +123,8 @@ jQuery(function() {
     jQuery("#fields_sortable > li:not(.shiftable)").remove();
     make_fields_sortable_odd_and_even_rows();
     row.find(".field-type").change();
-    return false;
-  });
+		return false;
+	});
 
   jQuery(document).delegate(".value-option-controls input", "change", function() {
     var new_options = [];
