@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.5.5 =
+
+* Still noticed IE issues, so not using jQuery form library like in 1.5.4. Made my own and seems to work better. Also prevent double click on form or resubmitting submitted form for both ajax and non ajax.
 
 = 1.5.4 =
 
@@ -118,6 +122,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.5.5 =
+
+* Still noticed IE issues, so not using jQuery form library like in 1.5.4. Made my own and seems to work better. Also prevent double click on form or resubmitting submitted form for both ajax and non ajax.
 
 = 1.5.4 =
 

@@ -1,22 +1,42 @@
 jQuery(function() {
 
-  jQuery(document).delegate("form.a-form.ajaxified .next, form.a-form.ajaxified .prev, form.a-form.ajaxified .send", "click", function() {
-    var action = jQuery(this).val();
-      jQuery('#'+jQuery(this).parents("form").attr("id")).after("<img class='a-form-loading' src='"+AFormsAjax.base_url+"/wp-content/plugins/a-forms/images/progress.gif' />").find("fieldset.submit").hide();
-    var form_id = '#'+jQuery(this).parents("form").attr("id");
-    var options = { 
-        target: form_id,
-        data: {action: action},
-        success: function(responseText, statusText, xhr, $form) {
+  jQuery(document).delegate("form.a-form .next, form.a-form .prev, form.a-form .send", "click", function(e) {
+
+    jQuery('#'+jQuery(this).parents("form").attr("id")).after("<img class='a-form-loading' src='"+AFormsAjax.base_url+"/wp-content/plugins/a-forms/images/progress.gif' />").find("fieldset.submit").hide();
+
+    if (jQuery(this).parents("form.a-form").hasClass("ajaxified")) {
+      e.preventDefault();
+      var field_hash = {};
+      jQuery(this).parents("form.a-form").find("input[type=text], input[type=hidden], select, input[type=radio]").each(function() {
+        field_hash[jQuery(this).attr("name")] = jQuery(this).val();
+      });
+      jQuery(this).parents("form.a-form").find("input[type=file]").each(function() {
+        field_hash[jQuery(this).attr("name").replace("[]", "")] = jQuery(this).val();
+      });
+      jQuery(this).parents("form.a-form").find("input[type=checkbox]").each(function() {
+        if (jQuery(this).prop('checked')) {
+          field_hash[jQuery(this).attr("name")] = jQuery(this).attr("value");
+        } else {
+          field_hash[jQuery(this).attr("name")] = "";
+        }
+      });
+      field_hash["action"] = jQuery(this).val();
+      var form_id = '#'+jQuery(this).parents("form.a-form").attr("id");
+      
+      jQuery.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: field_hash,
+        success: function(data) {
+          jQuery(form_id).html(data);
           jQuery(".a-form-loading").remove();
           jQuery(form_id).find("div.working").remove().find("fieldset.submit").show();
         }
-    }; 
-    jQuery('#'+jQuery(this).parents("form").attr("id")).ajaxSubmit(options); 
+      });
+      return false; 
+    }
+
     
-    // !!! Important !!! 
-        // always return false to prevent standard browser submit and page navigation 
-    return false; 
   });
 
 

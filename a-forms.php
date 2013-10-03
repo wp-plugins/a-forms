@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.4
+Version: 1.5.5
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -511,8 +511,11 @@ function a_form_shortcode($atts) {
 
     }
 
-    return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
-
+    if (preg_match("/class='success'/", $mail_message)) {
+      return $mail_message;
+    } else {
+      return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
+    }
   }
 }
 
