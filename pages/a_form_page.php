@@ -15,7 +15,7 @@ final class AFormPage {
     // Get this section.
     $section = $sections[$section_index];
 
-    if(!isset($_POST["aform_ajaxified_form"])) {
+    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
       // If not a ajax request.
       $ajax_class = "";
       if ($form->enable_ajax == "1") {
@@ -23,9 +23,6 @@ final class AFormPage {
       }
 
       $return_content .= "<form id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form $ajax_class' enctype='multipart/form-data'>";
-    }
-		if ($form->enable_ajax == "1") {
-        $return_content .= "<input type='hidden' name='aform_ajaxified_form' value='1'/>";
     }
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
     $return_content .= "<fieldset>";
@@ -153,7 +150,7 @@ final class AFormPage {
     $return_content .= "</div></fieldset>";
 
 
-    if(!isset($_POST["aform_ajaxified_form"])) {
+    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
       $return_content .= "</form>";
     }
 
