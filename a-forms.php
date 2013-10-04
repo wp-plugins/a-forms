@@ -447,8 +447,8 @@ function aforms_register_form_widget() {
 
 add_action("init", "a_form_ajax_responder");
 function a_form_ajax_responder() {
-  // Check if $_POST["aform_ajaxified_form"] exists. If it does it means the A Form has been set up to use AJAX.
-  if(isset($_POST["aform_ajaxified_form"])) {
+  // Check if ajax request
+  if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
     // Further checks to see if this really is an A Form post.
     if (isset($_POST["send_a_form"]) && $_POST["send_a_form"] != "") {
       // It happens to be an A Form post. Not only that, but a A Form ajax post.
