@@ -11,10 +11,10 @@ final class AFormValidation {
 
       // User clicked on Send button and the form has a captcha.
       // Check the type of captcha.
-      if ($form->captcha_type == "0") {
+      if ($form->captcha_type == "1") {
         // Form is using the Securimage Captcha.
         $captcha_valid = tom_check_captcha($form_name."captcha");
-      } else {
+      } else if ($form->captcha_type == "2") {
         // Form is using the Math Captcha.
 
         // Check that the answer is first number plus second number.
@@ -40,7 +40,7 @@ final class AFormValidation {
     return $captcha_valid;
   }
 
-	public static function is_valid($atts) {
+  public static function is_valid($atts) {
     $validation_array = array();
     $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
@@ -65,7 +65,7 @@ final class AFormValidation {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
       $validation_array[$form_name.$field_name] = $field->validation;
     }
-		return tom_validate_form($validation_array);
-	}
+    return tom_validate_form($validation_array);
+  }
 }
 ?>
