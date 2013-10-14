@@ -101,10 +101,16 @@ final class AdminAFormsPage {
       tom_add_form_field($instance, "checkbox", "Tracking", "tracking_enabled", "tracking_enabled", array(), "p", array(), array("1" => "Enabled"));
 
       tom_add_form_field($instance, "checkbox", "Ajax", "enable_ajax", "enable_ajax", array(), "p", array(), array("1" => "Enabled"));  
+      ?>
+      <p><strong>If you enable ajax, you won't be able to track the referrer url.</strong></p>
+      <?php
 
       tom_add_form_field($instance, "checkbox", "Captcha", "include_captcha", "include_captcha", array(), "p", array(), array("1" => "Include Before Send Button"));
 
-      tom_add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), array("0" => "", "1" => "Securimage Captcha", "2" => "Math Captcha"));    
+      tom_add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), array("0" => "", "1" => "Securimage Captcha", "2" => "Math Captcha"));   
+      ?>
+      <p><strong>Securimage Captcha doesn't work well with Ajax, if you want ajax and need a captcha, choose Math Captcha.</strong></p>
+      <?php 
 
 	  ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />
