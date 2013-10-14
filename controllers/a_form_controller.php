@@ -92,7 +92,7 @@ final class AFormController {
       }
 
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));  
+        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_SESSION[$form_name."_referrer"], "fields_array" => serialize($field_values)));  
       }        
 
       if ($form->success_redirect_url != "") {
@@ -101,7 +101,7 @@ final class AFormController {
 
     } else {
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SERVER["HTTP_REFERER"], "fields_array" => serialize($field_values)));
+        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_SESSION[$form_name."_referrer"], "fields_array" => serialize($field_values)));
       }
     }
 

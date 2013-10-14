@@ -25,6 +25,7 @@ final class AFormPage {
       $return_content .= "<form id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form $ajax_class' enctype='multipart/form-data'>";
     }
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
+
     $return_content .= "<fieldset>";
     // Get next section
     if (($_POST["action"]) == "Next") {
