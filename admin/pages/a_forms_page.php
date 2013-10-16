@@ -101,9 +101,6 @@ final class AdminAFormsPage {
       tom_add_form_field($instance, "checkbox", "Tracking", "tracking_enabled", "tracking_enabled", array(), "p", array(), array("1" => "Enabled"));
 
       tom_add_form_field($instance, "checkbox", "Ajax", "enable_ajax", "enable_ajax", array(), "p", array(), array("1" => "Enabled"));  
-      ?>
-      <p><strong>If you enable ajax, you won't be able to track the referrer url.</strong></p>
-      <?php
 
       tom_add_form_field($instance, "checkbox", "Captcha", "include_captcha", "include_captcha", array(), "p", array(), array("1" => "Include Before Send Button"));
 

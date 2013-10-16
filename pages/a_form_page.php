@@ -120,8 +120,7 @@ final class AFormPage {
       $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
     }
     $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
-
-    
+    $return_content .= "<input type='hidden' name='a_form_referrer' value='".esc_url($_SESSION["a_forms_referrer"])."' />";
     $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
 
     // Add action buttons

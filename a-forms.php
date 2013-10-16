@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.6
+Version: 1.5.7
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -511,7 +511,7 @@ function a_form_shortcode($atts) {
       }
 
     } else {
-      $_SESSION[$form_name."_referrer"] = $_SERVER["HTTP_REFERER"];
+      $_SESSION["a_forms_referrer"] = $_SERVER["HTTP_REFERER"];
     }
 
     if (preg_match("/class='success'/", $mail_message)) {
