@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.5.7
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.5.8 =
+
+* Added logo, found that some clients have issues with routing to correct admin page, so fixed that. Strange cos I didn't see the issue on mine.
 
 = 1.5.7 =
 
@@ -130,6 +134,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.5.8 =
+
+* Added logo, found that some clients have issues with routing to correct admin page, so fixed that. Strange cos I didn't see the issue on mine.
 
 = 1.5.7 =
 

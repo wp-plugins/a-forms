@@ -241,7 +241,7 @@ function register_a_forms_install_dependency_settings() {
 add_action('admin_menu', 'register_a_forms_page');
 function register_a_forms_page() {
   if (are_a_forms_dependencies_installed()) {
-    add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_router');
+    add_menu_page('A Forms', 'A Forms', 'manage_options', 'a-forms/a-forms.php', 'a_form_router', plugins_url("/tinymce/images/logo.png", __FILE__));
     add_submenu_page('a-forms/a-forms.php', 'Settings', 'Settings', 'manage_options', 'a-forms/a-forms-settings.php', 'a_form_router');
     add_submenu_page('a-forms/a-forms.php', 'Tracking', 'Tracking', 'manage_options', 'a-forms/a-forms-tracking.php', 'a_form_router');
     add_submenu_page('a-forms/a-forms.php', 'Styling', 'Styling', 'update_themes', 'a-forms/a-forms-styling.php', 'a_form_router');
@@ -335,9 +335,9 @@ function a_form_router() {
     }
 
     if ($_REQUEST["sub_action"] != "") {
-      $action = $_REQUEST["action"]."Action";
+      $action = str_replace("/", "", $_REQUEST["action"]."Action");
     } else if ($_REQUEST["action"] != "") {
-      $action = $_REQUEST["action"]."Action";
+      $action = str_replace("/", "", $_REQUEST["action"]."Action");
     } else {
       $action = "indexAction";
     }
