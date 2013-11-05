@@ -12,9 +12,6 @@ final class AFormPage {
       $section_index = 0;
     }
 
-    // Get this section.
-    $section = $sections[$section_index];
-
     if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
       // If not a ajax request.
       $ajax_class = "";
@@ -26,20 +23,85 @@ final class AFormPage {
     }
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
 
-    $return_content .= "<fieldset>";
-    // Get next section
-    if (($_POST["action"]) == "Next") {
-      if ($form_valid) {
-        $section_index++;
-      } 
+    if ($form->multipage_sections == "1") {
+      // Get next section
+      if (($_POST["action"]) == "Next") {
+        if ($form_valid) {
+          $section_index++;
+        } 
+      }
+
+      // Get previous section.
+      if (($_POST["action"]) == "Back") {
+        $section_index--;
+      }
+
+      $section = $sections[$section_index];
+
+      $return_content .= AFormPage::render_a_form_one_section_per_page($atts, $form, $form_name, $section, $return_content);
+    } else {
+
+      // Render all sections on the same page.
+      $sections_content = "";
+      foreach ($sections as $section) {
+        $sections_content .= "<fieldset id='".preg_replace("/\?|!/", "", str_replace(" ", "_", strtolower($section->section_name)))."'>";
+        $sections_content .= AFormPage::render_a_form_section_html($form, $form_name, $section, "");
+        $sections_content .= "</fieldset>";
+      }
+      $return_content .= $sections_content;
     }
 
-    // Get previous section.
-    if (($_POST["action"]) == "Back") {
-      $section_index--;
+    $input_attachment_urls = "";
+    if (count($attachment_urls) > 0) {
+      $attachment_urls = array_filter( $attachment_urls, 'strlen' );
+      $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
+    }
+    $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
+    $return_content .= "<input type='hidden' name='a_form_referrer' value='".esc_url($_SESSION["a_forms_referrer"])."' />";
+    $return_content .= "<fieldset class='submit'><div>";
+
+    $return_content .= "<input type='hidden' name='send_a_form_section' value='".$section_index."' />";
+    $return_content .= "<input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
+
+    // Add action buttons
+    // Check if more then one section
+    if (count($sections) > 1) {
+      // There is more then one section.
+
+      if ($form->multipage_sections != "1" || ($section_index+1) == count($sections)) {
+        // Looking at the last section.
+        $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
+      } else {
+        // Not looking at the last section.
+        $return_content .= "<input type='submit' name='action' value='Next' class='next'/>";
+      }
+
+    } else {
+      // Only one section.
+      $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
     }
 
-    $section = $sections[$section_index];
+    // Check which section your currently looking at.
+    if ($section_index > 0) {
+      // Not looking at the first section.
+      $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
+    }
+
+    $return_content .= "</div></fieldset>";
+
+
+    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+      $return_content .= "</form>";
+    }
+
+    return $return_content;
+	}
+
+
+  function render_a_form_one_section_per_page($atts, $form, $form_name, $section, $return_content) {
+    // We only want to display one section per page.
+
+    $return_content .= "<fieldset id='".preg_replace("/\?|!/", "", str_replace(" ", "_", strtolower($section->section_name)))."'>";
 
     // Navigate through all the other sections and make all fields hidden.
     $hidden_fields = tom_get_results("a_form_fields", "*", "form_id = '".$atts["id"]."' AND section_id <> '".$section->ID."'");
@@ -63,6 +125,14 @@ final class AFormPage {
       ob_end_clean();
     }
 
+    $return_content .= AFormPage::render_a_form_section_html($form, $form_name, $section, $return_content);
+
+    return $return_content .= "</fieldset>";
+  }
+
+
+
+  function render_a_form_section_html($form, $form_name, $section, $return_content) {
     $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
 
     // Render form fields.
@@ -112,50 +182,9 @@ final class AFormPage {
 
       $return_content .= ob_get_contents();
       ob_end_clean();
-    }
-
-    $input_attachment_urls = "";
-    if (count($attachment_urls) > 0) {
-      $attachment_urls = array_filter( $attachment_urls, 'strlen' );
-      $input_attachment_urls = implode("::", str_replace("\\\\", '\\', $attachment_urls));
-    }
-    $return_content .= "<input type='hidden' name='a_form_attachment_urls' value='".$input_attachment_urls."' />";
-    $return_content .= "<input type='hidden' name='a_form_referrer' value='".esc_url($_SESSION["a_forms_referrer"])."' />";
-    $return_content .= "</fieldset><fieldset class='submit'><div><input type='hidden' name='send_a_form_section' value='".$section_index."' /><input type='hidden' name='send_a_form' value='".$atts["id"]."' />";
-
-    // Add action buttons
-    // Check if more then one section
-    if (count($sections) > 1) {
-      // There is more then one section.
-
-      if (($section_index+1) == count($sections)) {
-        // Looking at the last section.
-        $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
-      } else {
-        // Not looking at the last section.
-        $return_content .= "<input type='submit' name='action' value='Next' class='next'/>";
-      }
-
-    } else {
-      // Only one section.
-      $return_content .= AFormPage::render_a_form_submit_html($form, $form_name);
-    }
-
-    // Check which section your currently looking at.
-    if ($section_index > 0) {
-      // Not looking at the first section.
-      $return_content .= "<input type='submit' name='action' value='Back' class='prev'/>";
-    }
-
-    $return_content .= "</div></fieldset>";
-
-
-    if(!(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
-      $return_content .= "</form>";
-    }
-
-    return $return_content;
-	}
+    } 
+    return $return_content; 
+  }
 
 	function render_a_form_submit_html($form, $form_name) {
 	  $return_content = "";

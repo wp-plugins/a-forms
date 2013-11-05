@@ -92,6 +92,8 @@ final class AdminAFormsPage {
       }
 
       tom_add_form_field($instance, "checkbox", "Section Names", "show_section_names", "show_section_names", array(), "p", array(), array("1" => "Visible"));
+      tom_add_form_field($instance, "checkbox", "Break Sections Into Pages", "multipage_sections", "multipage_sections", array(), "p", array(), array("1" => "Yes"));
+      
       tom_add_form_field($instance, "radio", "Confirmation Emails", "send_confirmation_email", "send_confirmation_email", array(), "p", array(), array("1" => "Send", "0" => "Don't Send"));
       tom_add_form_field($instance, "text", "Confirmation From Email", "confirmation_from_email", "confirmation_from_email", array("class" => "text"), "p", array(), array());
 

@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.5.8
+Stable tag: 1.5.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.5.9 =
+
+* Ability to use placeholders in the forms. Fixed up stylesheet reset button. Ability to choose if you want sections per page or in one page.
 
 = 1.5.8 =
 
@@ -134,6 +138,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.5.9 =
+
+* Ability to use placeholders in the forms. Fixed up stylesheet reset button. Ability to choose if you want sections per page or in one page. Need to upgrade your Tom M8te libary to use placeholder fields.
 
 = 1.5.8 =
 

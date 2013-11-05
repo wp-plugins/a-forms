@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.8
+Version: 1.5.9
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -170,6 +170,14 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_enable_ssl' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
+
+  global $wpdb;
+  $a_form_forms_table = $wpdb->prefix . "a_form_forms";
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'multipage_sections'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD multipage_sections VARCHAR(1) DEFAULT 1";
+    $wpdb->query($sql); 
+  }
 }
 
 function are_a_forms_dependencies_installed() {
@@ -531,6 +539,9 @@ function add_a_forms_js_and_css() {
 
   wp_register_script("a-forms", plugins_url("/js/application.js", __FILE__));
   wp_enqueue_script("a-forms");
+
+  wp_register_script("jquery-placeholder", plugins_url("/js/jquery-placeholder.js", __FILE__));
+  wp_enqueue_script("jquery-placeholder");
 
   wp_localize_script( 'a-forms', 'AFormsAjax', array(
     "base_url" => get_option('siteurl'),

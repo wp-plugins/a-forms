@@ -7,7 +7,10 @@ jQuery(function() {
     if (jQuery(this).parents("form.a-form").hasClass("ajaxified")) {
       e.preventDefault();
       var field_hash = {};
-      jQuery(this).parents("form.a-form").find("input[type=text], input[type=hidden], select, input[type=radio], textarea").each(function() {
+      jQuery(this).parents("form.a-form").find("input[type=text], input[type=hidden], select, textarea").each(function() {
+        field_hash[jQuery(this).attr("name")] = jQuery(this).val();
+      });
+      jQuery(this).parents("form.a-form").find("input[type=radio]:checked").each(function() {
         field_hash[jQuery(this).attr("name")] = jQuery(this).val();
       });
       jQuery(this).parents("form.a-form").find("input[type=file]").each(function() {

@@ -12,5 +12,9 @@ final class AdminAFormStylingController {
 		}
 		AdminAFormStylingPage::indexPage($css_content);
 	}
+
+	public static function ResetAction() {
+		aform_copy_directory(AFormsPath::normalize(dirname(__FILE__)."../../../css"), get_template_directory());  		
+	}
 }
 ?>
