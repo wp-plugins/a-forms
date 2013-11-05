@@ -15,7 +15,11 @@ jQuery(function() {
     }).blur();
 
     jQuery("form").submit(function() {
-      jQuery('[placeholder]').val("");
+      jQuery('[placeholder]').each(function() {
+        if (jQuery(this).attr("placeholder") == jQuery(this).val()) {
+          jQuery(this).val("");
+        }
+      });
     });
   }
 });
