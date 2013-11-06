@@ -1,5 +1,5 @@
 jQuery(function() {
-  if (jQuery.browser.msie) {
+  if(navigator.appVersion.indexOf("MSIE")!=-1) {
     jQuery('[placeholder]').focus(function() {
       var input = jQuery(this);
       if (input.val() == input.attr('placeholder')) {
