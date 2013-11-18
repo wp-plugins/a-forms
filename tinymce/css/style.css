@@ -1,0 +1,12 @@
+#cancel_aform {
+	float: left;
+}
+#insert_aform {
+	float: right;
+}
+#link .panel_wrapper, #link div.current {
+	height: 42px;
+}
+.panel_wrapper p {
+	padding-bottom: 22px;
+}
