@@ -3,8 +3,8 @@ Contributors: MMDeveloper
 Donate link: 
 Tags: form, contact, plugin
 Requires at least: 3.3
-Tested up to: 3.6
-Stable tag: 1.5.9
+Tested up to: 3.7
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ A wordpress plugin that allows you to add a form on your website. It's quite eas
 
 == Installation ==
 
-1) Install WordPress 3.6 or higher
+1) Install WordPress 3.7 or higher
 
 2) Download the latest from:
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.6.0 =
+
+* Display * on front end view if form item is required.
 
 = 1.5.9 =
 
@@ -138,6 +142,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.6.0 =
+
+* Display * on front end view if form item is required.
 
 = 1.5.9 =
 

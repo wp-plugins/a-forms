@@ -156,7 +156,7 @@ final class AFormPage {
         }
       }
       $field_label = $field->field_label;
-      if (preg_match("/required/",$validation_array[$form_name.$field_name])) {
+      if (preg_match("/required/",$field->validation)) {
         $field_label .= "<abbr title='required'>*</abbr>";
       }
 

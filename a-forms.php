@@ -6,7 +6,7 @@ Description: Adds a contact form to your wordpress site.
 
 Installation:
 
-1) Install WordPress 3.6 or higher
+1) Install WordPress 3.7 or higher
 
 2) Download the latest from:
 
@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.5.9
+Version: 1.6.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
