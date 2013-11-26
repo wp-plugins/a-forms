@@ -97,6 +97,7 @@ final class AFormController {
 
       if ($form->success_redirect_url != "") {
         echo("<meta http-equiv='refresh' content='0;url=".$form->success_redirect_url."/'>");
+        echo("<script language='javascript'>window.location='".$form->success_redirect_url."';</script>");
       }
 
     } else {

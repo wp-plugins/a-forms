@@ -20,6 +20,7 @@ final class AdminAFormSectionsController {
         }
         
         echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+        echo("<script language='javascript'>window.location='".$url."';</script>");
         exit;
       }
 
@@ -41,6 +42,7 @@ final class AdminAFormSectionsController {
       if ($valid) {
         $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Created&action=edit&id=".$_POST["form_id"]."";
         echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+        echo("<script language='javascript'>window.location='".$url."';</script>");
         exit;
       }
     }
@@ -58,6 +60,7 @@ final class AdminAFormSectionsController {
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Deleted";
       
       echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+      echo("<script language='javascript'>window.location='".$url."';</script>");
     }
     exit;
 	}

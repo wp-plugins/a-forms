@@ -5,6 +5,7 @@ final class AdminAFormsController {
     if (count($forms) == 0) {
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
       echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+      echo("<script language='javascript'>window.location='".$url."';</script>");
     } else {
     	AdminAFormsPage::indexPage();
     }
@@ -42,6 +43,7 @@ final class AdminAFormsController {
         }
         
         echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+        echo("<script language='javascript'>window.location='".$url."';</script>");
         exit;
       }
       
@@ -95,6 +97,7 @@ final class AdminAFormsController {
 
         $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&id=".$form_id."&message=Record Created";
         echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+        echo("<script language='javascript'>window.location='".$url."';</script>");
         exit;
       }
 
@@ -109,6 +112,7 @@ final class AdminAFormsController {
     tom_delete_record_by_id("a_form_fields", "form_id", $_GET["id"]);
     $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Deleted";
     echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
+    echo("<script language='javascript'>window.location='".$url."';</script>");
     exit;
 	}
 
