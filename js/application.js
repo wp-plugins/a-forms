@@ -57,7 +57,9 @@ jQuery(function() {
   show_hide_captcha_type();
   jQuery("#include_captcha_include_captcha_1").click(show_hide_captcha_type);
 
-  jQuery(document).delegate(".shiftable .delete", "click", function() {
+  jQuery(document).delegate(".shiftable .delete", "click", function(e) {
+    e.stopPropagation();
+    e.preventDefault();
     var this_record = jQuery(this);
     jQuery.ajax({
       type: 'GET',
