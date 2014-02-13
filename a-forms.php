@@ -20,7 +20,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.6.2
+Version: 1.6.3
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -323,34 +323,69 @@ function a_form_router() {
       update_option("include_securimage", "1");
     } 
 
-    $controller = "";
-    $action = "";
-
     if (preg_match("/a-forms-tracking/", $_REQUEST["page"])) {
-      $controller = "AdminAFormTrackingController";
+
+      if (($_REQUEST["sub_action"] == "") && ($_REQUEST["action"] == "")) {
+        AdminAFormTrackingPage::indexPage();
+      } else if ($_REQUEST["action"] == "show") {
+        AdminAFormTrackingPage::showPage();
+      } else if ($_REQUEST["action"] == "Search") {
+        AdminAFormTrackingPage::showPage();
+      } else if ($_REQUEST["action"] == "view") {
+        AdminAFormTrackingPage::viewPage();
+      }
+
     } else if (preg_match("/a-forms-styling/", $_REQUEST["page"])) {
-      $controller = "AdminAFormStylingController";
+      
+      if ($_REQUEST["action"] == "Reset") {
+        AdminAFormStylingController::ResetAction();
+      } 
+
+      AdminAFormStylingController::indexAction();
+      
     } else if (preg_match("/a-forms-settings/", $_REQUEST["page"])) {
-      $controller = "AdminAFormSettingsController";
+      AdminAFormSettingsController::indexAction();
     } else {
       if ($_REQUEST["controller"] == "" || $_REQUEST["controller"] == "AForms") {
-        $controller = "AdminAFormsController";
+
+        if (($_REQUEST["sub_action"] == "") && ($_REQUEST["action"] == "")) {
+          AdminAFormsController::indexAction();
+        } else if ($_REQUEST["action"] == "edit") {
+          AdminAFormsController::editAction();
+        } else if ($_REQUEST["sub_action"] == "Update" || $_REQUEST["sub_action"] == "Save and Finish") {
+          AdminAFormsController::updateAction();
+        } else if ($_REQUEST["action"] == "new") {
+          AdminAFormsController::newAction();
+        } else if ($_REQUEST["action"] == "Create") {
+          AdminAFormsController::createAction();
+        } else if ($_REQUEST["action"] == "delete") {
+          AdminAFormsController::deleteAction();
+        }       
+
       } else if ($_REQUEST["controller"] == "AFormFields"){
-        $controller = "AdminAFormFieldsController";
-      } else if ($_REQUEST["controller"] == "AFormSections"){
-        $controller = "AdminAFormSectionsController";
+
+        if ($_REQUEST["action"] == "Update") {
+          AdminAFormFieldsController::updateAction();
+        } else if ($_REQUEST["action"] == "delete") {
+          AdminAFormFieldsController::deleteAction();
+        }
+
+      } else if ($_REQUEST["controller"] == "AFormSections") {
+
+        if ($_REQUEST["action"] == "edit") {
+          AdminAFormSectionsController::editAction();
+        } else if ($_REQUEST["action"] == "Update") {
+          AdminAFormSectionsController::updateAction();
+        } else if ($_REQUEST["action"] == "new") {
+          AdminAFormSectionsController::newAction();
+        } else if ($_REQUEST["action"] == "Create") {
+          AdminAFormSectionsController::createAction();
+        } else if ($_REQUEST["action"] == "delete") {
+          AdminAFormSectionsController::deleteAction();
+        }
+
       }
     }
-
-    if ($_REQUEST["sub_action"] != "") {
-      $action = str_replace("/", "", $_REQUEST["action"]."Action");
-    } else if ($_REQUEST["action"] != "") {
-      $action = str_replace("/", "", $_REQUEST["action"]."Action");
-    } else {
-      $action = "indexAction";
-    }
-
-    $controller::$action();
 
     ?>
     <div class="clear"></div>

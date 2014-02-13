@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.6.3 =
+
+* Noticed that latest version of php does not support dynamic mapping of controllers and actions, so I had to redo the route mapping for admin.
 
 = 1.6.2 =
 
@@ -150,6 +154,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.6.3 =
+
+* Noticed that latest version of php does not support dynamic mapping of controllers and actions, so I had to redo the route mapping for admin.
 
 = 1.6.2 =
 
