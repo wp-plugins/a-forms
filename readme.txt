@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 1.6.4 =
+
+* Security hole found in Tom m8te and so needed to make change so that A Forms can work with Tom M8te 1.6.0.
 
 = 1.6.3 =
 
@@ -154,6 +158,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 1.6.4 =
+
+* Security hole found in Tom m8te and so needed to make change so that A Forms can work with Tom M8te 1.6.0.
 
 = 1.6.3 =
 

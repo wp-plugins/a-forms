@@ -69,7 +69,8 @@ final class AdminAFormTrackingPage {
                 $content = $fields_array[str_replace(" ", "_", strtolower($field->field_label))];
                 echo("<td>");
                 if ($content != "" && $field->field_type == "file") {
-                  echo("<a href='".get_option("siteurl")."/wp-content/plugins/tom-m8te/tom-download-file.php?file=".$content."'>download</a>");
+                  $tomm8te_nonce = wp_create_nonce( "tomm8te_download_file_nonce" );
+                  echo("<a href='".get_option("siteurl")."/wp-admin/admin.php?page=tom-m8te/tom-m8te-story.php&tomm8te_download=true&_tomm8te_nonce=".$tomm8te_nonce."&file=".$content."'>download</a>");
                 } else {
                   echo(preg_replace("/, $/", "", esc_html($content)));
                 }
