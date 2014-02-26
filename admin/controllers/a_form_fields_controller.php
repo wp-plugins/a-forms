@@ -8,7 +8,7 @@ final class AdminAFormFieldsController {
       
       foreach ($fields as $field) {
         if ($_POST["FID"][$index] != "") {
-          $test_valid = tom_update_record_by_id("a_form_fields", 
+          $test_valid = AFormsTomM8::update_record_by_id("a_form_fields", 
             array(
               "section_id" => $_POST["section_id"][$index],
               "field_label" => $_POST["field_label"][$index],
@@ -16,7 +16,7 @@ final class AdminAFormFieldsController {
               "field_order" => $_POST["field_order"][$index],
               "validation" => $_POST["validation_0"][$index]." ".$_POST["validation_1"][$index],
               "value_options" => $_POST["value_options"][$index],
-              "file_ext_allowed" => tom_get_query_string_value("file_ext_allowed", $index)
+              "file_ext_allowed" => AFormsTomM8::get_query_string_value("file_ext_allowed", $index)
             ),
             "FID",
             $_POST["FID"][$index]
@@ -43,10 +43,10 @@ final class AdminAFormFieldsController {
 		// Delete record by id.
     $url = "";
     if (isset($_GET["fid"])) {
-      tom_update_record_by_id("a_form_forms", array("field_name_id" => ""), "field_name_id", $_GET["fid"]);
-      tom_update_record_by_id("a_form_forms", array("field_email_id" => ""), "field_email_id", $_GET["fid"]);
-      tom_update_record_by_id("a_form_forms", array("field_subject_id" => ""), "field_subject_id", $_GET["fid"]);
-      tom_delete_record_by_id("a_form_fields", "FID", $_GET["fid"]);
+      AFormsTomM8::update_record_by_id("a_form_forms", array("field_name_id" => ""), "field_name_id", $_GET["fid"]);
+      AFormsTomM8::update_record_by_id("a_form_forms", array("field_email_id" => ""), "field_email_id", $_GET["fid"]);
+      AFormsTomM8::update_record_by_id("a_form_forms", array("field_subject_id" => ""), "field_subject_id", $_GET["fid"]);
+      AFormsTomM8::delete_record_by_id("a_form_fields", "FID", $_GET["fid"]);
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=edit&message=Record Deleted&id=".$_GET["form_id"]."";
       echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     }

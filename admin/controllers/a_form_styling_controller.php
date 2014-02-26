@@ -7,7 +7,7 @@ final class AdminAFormStylingController {
 			$css_content = $_POST["css_content"];
 			$css_content = str_replace('\"', "\"", $css_content);
 			$css_content = str_replace("\'", '\'', $css_content);
-			tom_write_to_file($css_content, $location);
+			AFormsTomM8::write_to_file($css_content, $location);
 			$_GET["message"] = "Update Complete";
 		}
 		AdminAFormStylingPage::indexPage($css_content);

@@ -3,7 +3,7 @@ final class AFormValidation {
 
 
   public static function is_valid_captcha($atts) {
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $captcha_valid = false;
     // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
@@ -13,7 +13,7 @@ final class AFormValidation {
       // Check the type of captcha.
       if ($form->captcha_type == "1") {
         // Form is using the Securimage Captcha.
-        $captcha_valid = tom_check_captcha($form_name."captcha");
+        $captcha_valid = AFormsTomM8::check_captcha($form_name."captcha");
       } else if ($form->captcha_type == "2") {
         // Form is using the Math Captcha.
 
@@ -42,8 +42,8 @@ final class AFormValidation {
 
   public static function is_valid($atts) {
     $validation_array = array();
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
-    $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $sections = AFormsTomM8::get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
 
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
@@ -60,12 +60,12 @@ final class AFormValidation {
     $section = $sections[$section_index];
 
     // Add validation for this section only.
-    $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'");
+    $fields = AFormsTomM8::get_results("a_form_fields", "*", "section_id='".$section->ID."'");
     foreach ($fields as $field) {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
       $validation_array[$form_name.$field_name] = $field->validation;
     }
-    return tom_validate_form($validation_array);
+    return AFormsTomM8::validate_form($validation_array);
   }
 }
 ?>

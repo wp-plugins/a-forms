@@ -5,7 +5,7 @@ final class AdminAFormsPage {
 		?>
 			<div class="postbox " style="display: block; ">
 	    <div class="inside">
-	      <?php tom_generate_datatable("a_form_forms", array("ID", "form_name", "include_admin_in_emails", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __AFORMS_DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   ?>
+	      <?php AFormsTomM8::generate_datatable("a_form_forms", array("ID", "form_name", "include_admin_in_emails", "to_email", "tracking_enabled"), "ID", "", array("form_name ASC"), __AFORMS_DEFAULT_LIMIT__, get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php", false, true, true, true, true);   ?>
 	    </div>
 	    </div>
 	  </div>
@@ -15,7 +15,7 @@ final class AdminAFormsPage {
 	public static function editPage() {
 		AdminAFormsPage::common_header();
 		// Display Edit Page
-    $a_form = tom_get_row_by_id("a_form_forms", "*", "ID", ($_GET["id"]));
+    $a_form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", ($_GET["id"]));
     ?>
       <div class="postbox " style="display: block; ">
       <div class="inside">
@@ -67,46 +67,50 @@ final class AdminAFormsPage {
 	public static function render_admin_a_form_forms_form($instance, $action) { ?>
     <div id="setting_column">
 	  <?php
-		  tom_add_form_field($instance, "hidden", "ID *", "ID", "ID", array(), "span", array("class" => "hidden"));
-		  tom_add_form_field($instance, "text", "Name *", "form_name", "form_name", array("class" => "text"), "p", array());
+		  AFormsTomM8::add_form_field($instance, "hidden", "ID *", "ID", "ID", array(), "span", array("class" => "hidden"));
+		  AFormsTomM8::add_form_field($instance, "text", "Name *", "form_name", "form_name", array("class" => "text"), "p", array());
 
 		  if (get_option("a_forms_admin_email") != "") {
-        tom_add_form_field($instance, "checkbox", "Send Emails To", "include_admin_in_emails", "include_admin_in_emails", array(), "p", array(), array("1" => "Admin User"));
+        AFormsTomM8::add_form_field($instance, "checkbox", "Send Emails To", "include_admin_in_emails", "include_admin_in_emails", array(), "p", array(), array("1" => "Admin User"));
       }
-      tom_add_form_field($instance, "text", "Send Emails To *", "to_email", "to_email", array("class" => "text"), "p", array());
-      tom_add_form_field($instance, "text", "CC Emails To", "to_cc_email", "to_cc_email", array("class" => "text"), "p", array());
-      tom_add_form_field($instance, "text", "BCC Emails To", "to_bcc_email", "to_bcc_email", array("class" => "text"), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "Send Emails To *", "to_email", "to_email", array("class" => "text"), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "CC Emails To", "to_cc_email", "to_cc_email", array("class" => "text"), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "BCC Emails To", "to_bcc_email", "to_bcc_email", array("class" => "text"), "p", array());
       
-      tom_add_form_field($instance, "text", "Email Subject *", "subject", "subject", array("class" => "text"), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "Email Subject *", "subject", "subject", array("class" => "text"), "p", array());
       
       if ($instance != null) {
         $field_options = array("" => "");
-        $fields = tom_get_results("a_form_fields", "*", "form_id=".$instance->ID);
+        $fields = AFormsTomM8::get_results("a_form_fields", "*", "form_id=".$instance->ID);
         foreach ($fields as $field) {
           $field_options[$field->FID] = $field->field_label;
         }
-        tom_add_form_field($instance, "select", "From Name Field", "field_name_id", "field_name_id", array(), "p", array(), $field_options);
-        tom_add_form_field($instance, "select", "From Email Field", "field_email_id", "field_email_id", array(), "p", array(), $field_options);
-        tom_add_form_field($instance, "select", "Include In Subject Field", "field_subject_id", "field_subject_id", array(), "p", array(), $field_options);
+        AFormsTomM8::add_form_field($instance, "select", "From Name Field", "field_name_id", "field_name_id", array(), "p", array(), $field_options);
+        AFormsTomM8::add_form_field($instance, "select", "From Email Field", "field_email_id", "field_email_id", array(), "p", array(), $field_options);
+        AFormsTomM8::add_form_field($instance, "select", "Include In Subject Field", "field_subject_id", "field_subject_id", array(), "p", array(), $field_options);
 
       }
 
-      tom_add_form_field($instance, "checkbox", "Section Names", "show_section_names", "show_section_names", array(), "p", array(), array("1" => "Visible"));
-      tom_add_form_field($instance, "checkbox", "Break Sections Into Pages", "multipage_sections", "multipage_sections", array(), "p", array(), array("1" => "Yes"));
+      AFormsTomM8::add_form_field($instance, "checkbox", "Section Names", "show_section_names", "show_section_names", array(), "p", array(), array("1" => "Visible"));
+      AFormsTomM8::add_form_field($instance, "checkbox", "Break Sections Into Pages", "multipage_sections", "multipage_sections", array(), "p", array(), array("1" => "Yes"));
       
-      tom_add_form_field($instance, "radio", "Confirmation Emails", "send_confirmation_email", "send_confirmation_email", array(), "p", array(), array("1" => "Send", "0" => "Don't Send"));
-      tom_add_form_field($instance, "text", "Confirmation From Email", "confirmation_from_email", "confirmation_from_email", array("class" => "text"), "p", array(), array());
+      AFormsTomM8::add_form_field($instance, "radio", "Confirmation Emails", "send_confirmation_email", "send_confirmation_email", array(), "p", array(), array("1" => "Send", "0" => "Don't Send"));
+      AFormsTomM8::add_form_field($instance, "text", "Confirmation From Email", "confirmation_from_email", "confirmation_from_email", array("class" => "text"), "p", array(), array());
 
-      tom_add_form_field($instance, "textarea", "Successful Message", "success_message", "success_message", array(), "p", array(), array());
-      tom_add_form_field($instance, "text", "Successful Redirect URL", "success_redirect_url", "success_redirect_url", array("class" => "text"), "p", array(), array());
+      AFormsTomM8::add_form_field($instance, "textarea", "Successful Message", "success_message", "success_message", array(), "p", array(), array());
+      AFormsTomM8::add_form_field($instance, "text", "Successful Redirect URL", "success_redirect_url", "success_redirect_url", array("class" => "text"), "p", array(), array());
       
-      tom_add_form_field($instance, "checkbox", "Tracking", "tracking_enabled", "tracking_enabled", array(), "p", array(), array("1" => "Enabled"));
+      AFormsTomM8::add_form_field($instance, "checkbox", "Tracking", "tracking_enabled", "tracking_enabled", array(), "p", array(), array("1" => "Enabled"));
 
-      tom_add_form_field($instance, "checkbox", "Ajax", "enable_ajax", "enable_ajax", array(), "p", array(), array("1" => "Enabled"));  
+      AFormsTomM8::add_form_field($instance, "checkbox", "Ajax", "enable_ajax", "enable_ajax", array(), "p", array(), array("1" => "Enabled"));  
 
-      tom_add_form_field($instance, "checkbox", "Captcha", "include_captcha", "include_captcha", array(), "p", array(), array("1" => "Include Before Send Button"));
+      AFormsTomM8::add_form_field($instance, "checkbox", "Captcha", "include_captcha", "include_captcha", array(), "p", array(), array("1" => "Include Before Send Button"));
 
-      tom_add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), array("0" => "", "1" => "Securimage Captcha", "2" => "Math Captcha"));   
+      $options = array("0" => "", "2" => "Math Captcha");
+      if (class_exists("Securimage")) {
+        $options = array("0" => "", "1" => "Securimage Captcha", "2" => "Math Captcha");
+      }
+      AFormsTomM8::add_form_field($instance, "select", "Captcha Type", "captcha_type", "captcha_type", array(), "p", array("id" => "captcha_type_container"), $options);   
       ?>
       <p><strong>Securimage Captcha doesn't work well with Ajax, if you want ajax and need a captcha, choose Math Captcha.</strong></p>
       <?php 
@@ -132,7 +136,7 @@ final class AdminAFormsPage {
     ?>
     
     <?php
-    tom_add_form_field($instance, "hidden", "ID", "ID", "ID", array(), "span", array("class" => "hidden"));
+    AFormsTomM8::add_form_field($instance, "hidden", "ID", "ID", "ID", array(), "span", array("class" => "hidden"));
 
     ?>
     <ul id="fields_row_clone">
@@ -147,7 +151,7 @@ final class AdminAFormsPage {
 
     <ul id="fields_sortable">
       <?php
-        $sections = tom_get_results("a_form_sections", "*", "form_id=".$instance->ID, $order_array = array("section_order ASC"), $limit = "");
+        $sections = AFormsTomM8::get_results("a_form_sections", "*", "form_id=".$instance->ID, $order_array = array("section_order ASC"), $limit = "");
         $index = 0;
         foreach ($sections as $section) { ?>
           <li class='shiftable section-heading' id="section_id_<?php echo($section->ID); ?>">
@@ -157,7 +161,7 @@ final class AdminAFormsPage {
             <a href="<?php echo(get_option('siteurl')); ?>/wp-admin/admin.php?page=a-forms/a-forms.php&action=delete&controller=AFormSections&id=<?php echo($section->ID); ?>" class="delete">Delete</a>
           </li>
           <?php
-          $fields = tom_get_results("a_form_fields", "*", "section_id=".$section->ID, $order_array = array("field_order ASC"), $limit = "");
+          $fields = AFormsTomM8::get_results("a_form_fields", "*", "section_id=".$section->ID, $order_array = array("field_order ASC"), $limit = "");
 
           foreach ($fields as $field) { ?>
             <li id="<?php echo($field->FID); ?>" class="shiftable">

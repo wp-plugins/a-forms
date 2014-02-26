@@ -2,10 +2,10 @@
 final class AFormPage {
 	public static function render_form($atts, $return_content, $form_valid, $attachment_urls) {
     $aform_form_nonce = wp_create_nonce( "a-forms-contact-a-form" );
-		$form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+		$form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
-    $sections = tom_get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
+    $sections = AFormsTomM8::get_results("a_form_sections", "*", "form_id='".$atts["id"]."'", array("section_order ASC"));
 		if (isset($_POST["send_a_form_section"])) {
       $section_index = ($_POST["send_a_form_section"]);
     } else {
@@ -104,7 +104,7 @@ final class AFormPage {
     $return_content .= "<fieldset id='".preg_replace("/\?|!/", "", str_replace(" ", "_", strtolower($section->section_name)))."'>";
 
     // Navigate through all the other sections and make all fields hidden.
-    $hidden_fields = tom_get_results("a_form_fields", "*", "form_id = '".$atts["id"]."' AND section_id <> '".$section->ID."'");
+    $hidden_fields = AFormsTomM8::get_results("a_form_fields", "*", "form_id = '".$atts["id"]."' AND section_id <> '".$section->ID."'");
     foreach ($hidden_fields as $field) {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
       ob_start();
@@ -112,12 +112,12 @@ final class AFormPage {
       if ($field->field_type == "checkbox") {
         $i = 0;
         foreach (explode(",", $field->value_options) as $key) {
-          tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name."_".$i, $form_name.$field_name."_".$i, array(), "p", array(), array());  
+          AFormsTomM8::add_form_field(null, "hidden", $field->field_label, $form_name.$field_name."_".$i, $form_name.$field_name."_".$i, array(), "p", array(), array());  
           $i++;
         }
       } else {
 
-        tom_add_form_field(null, "hidden", $field->field_label, $form_name.$field_name, $form_name.$field_name, array(), "p", array(), array());
+        AFormsTomM8::add_form_field(null, "hidden", $field->field_label, $form_name.$field_name, $form_name.$field_name, array(), "p", array(), array());
         
       }
       
@@ -133,7 +133,7 @@ final class AFormPage {
 
 
   function render_a_form_section_html($form, $form_name, $section, $return_content) {
-    $fields = tom_get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
+    $fields = AFormsTomM8::get_results("a_form_fields", "*", "section_id='".$section->ID."'", array("field_order ASC"));
 
     // Render form fields.
     if ($form->show_section_names) {
@@ -168,7 +168,7 @@ final class AFormPage {
       if (isset($_SESSION[$form_name.$field_name."_error"])) {
         $error_class = "error";
       }
-      tom_add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
+      AFormsTomM8::add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
       if ($field->field_type == "file" && $field->file_ext_allowed != "") {
         $extensions_allowed = $field->file_ext_allowed;
         $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);
@@ -196,19 +196,19 @@ final class AFormPage {
 	    ob_start();
 	    if ($form->captcha_type == "1") {
 
-	      tom_add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
+	      AFormsTomM8::add_form_field(null, "captcha", "Captcha", AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 
 	    } else if ($form->captcha_type == "2") {
 
 	      $first_number = $_POST[AFormPage::aform_field_name($form, "captcha_first_number")] = rand(1, 20);
 	      $second_number = $_POST[AFormPage::aform_field_name($form, "captcha_second_number")] = rand(1, 20);
 
-	      tom_add_form_field(null, "hidden", "First number", AFormPage::aform_field_name($form, "captcha_first_number"), 
+	      AFormsTomM8::add_form_field(null, "hidden", "First number", AFormPage::aform_field_name($form, "captcha_first_number"), 
 	        AFormPage::aform_field_name($form, "captcha_first_number")
 	        , array(), "div", array());
-	      tom_add_form_field(null, "hidden", "Second number", AFormPage::aform_field_name($form, "captcha_second_number"), AFormPage::aform_field_name($form, "captcha_second_number"), array(), "div", array());
+	      AFormsTomM8::add_form_field(null, "hidden", "Second number", AFormPage::aform_field_name($form, "captcha_second_number"), AFormPage::aform_field_name($form, "captcha_second_number"), array(), "div", array());
 
-	      tom_add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
+	      AFormsTomM8::add_form_field(null, "text", "What is ".$first_number." + ".$second_number, AFormPage::aform_field_name($form, "captcha"), AFormPage::aform_field_name($form, "captcha"), array(), "div", array("class" => "captcha $error_class"));
 	    }
 	    $return_content .= ob_get_contents();
 	    ob_end_clean();

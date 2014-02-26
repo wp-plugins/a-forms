@@ -4,7 +4,7 @@ final class AdminAFormTrackingPage {
 		<div class="wrap">
 		  <h2>Tracking</h2>		  
       <?php
-      	tom_generate_datatable("a_form_forms", array("ID", "form_name"), "ID", "", array(), "30", "?page=a-forms/a-forms-tracking.php&controller=AFormTracking", true, false, false, false, true, "Y-m-d", array()); 
+      	AFormsTomM8::generate_datatable("a_form_forms", array("ID", "form_name"), "ID", "", array(), "30", "?page=a-forms/a-forms-tracking.php&controller=AFormTracking", true, false, false, false, true, "Y-m-d", array()); 
       ?>
 		</div>
 		<?php
@@ -13,9 +13,9 @@ final class AdminAFormTrackingPage {
 	public static function showPage() {
 		?>
 		  <form action="" method="post">
-        <?php tom_add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
-        <?php tom_add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
-        <?php tom_add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
+        <?php AFormsTomM8::add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
+        <?php AFormsTomM8::add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>
+        <?php AFormsTomM8::add_form_field(null, "text", "Date To", "search_date_to", "search_date_to", array("class" => "datepicker"), "p", array()); ?>
         <p><input type="submit" name="action" value="Search" /></p>
       </form>
       <?php
@@ -27,25 +27,25 @@ final class AdminAFormTrackingPage {
       }
       $offset = $page_no * $limit_clause;
       $where_sql = "form_id=".($_GET["id"]);
-      if ((tom_get_query_string_value("search_text")) != "") {
-        $where_sql .= " AND content LIKE '%".(tom_get_query_string_value("search_text"))."%'";
+      if ((AFormsTomM8::get_query_string_value("search_text")) != "") {
+        $where_sql .= " AND content LIKE '%".(AFormsTomM8::get_query_string_value("search_text"))."%'";
       }
 
-      if (((tom_get_query_string_value("search_date_from")) != null) && ((tom_get_query_string_value("search_date_to")) != null)) {
-        $where_sql .= " AND (created_at BETWEEN '".(tom_get_query_string_value("search_date_from"))." 00:00:00' AND '".(tom_get_query_string_value("search_date_to"))." 23:59:59')";
-      } else if ((tom_get_query_string_value("search_date_from")) != null) {
-        $where_sql .= " AND created_at > '".(tom_get_query_string_value("search_date_from"))." 00:00:00'";
-      } else if ((tom_get_query_string_value("search_date_to")) != null) {
-        $where_sql .= " AND created_at < '".(tom_get_query_string_value("search_date_to"))." 23:59:59'";
+      if (((AFormsTomM8::get_query_string_value("search_date_from")) != null) && ((AFormsTomM8::get_query_string_value("search_date_to")) != null)) {
+        $where_sql .= " AND (created_at BETWEEN '".(AFormsTomM8::get_query_string_value("search_date_from"))." 00:00:00' AND '".(AFormsTomM8::get_query_string_value("search_date_to"))." 23:59:59')";
+      } else if ((AFormsTomM8::get_query_string_value("search_date_from")) != null) {
+        $where_sql .= " AND created_at > '".(AFormsTomM8::get_query_string_value("search_date_from"))." 00:00:00'";
+      } else if ((AFormsTomM8::get_query_string_value("search_date_to")) != null) {
+        $where_sql .= " AND created_at < '".(AFormsTomM8::get_query_string_value("search_date_to"))." 23:59:59'";
       }
 
-      $tracks = tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC"), "$limit_clause OFFSET $offset");
-      $fields = tom_get_results("a_form_fields", "*", "form_id=".($_GET["id"]), array());
+      $tracks = AFormsTomM8::get_results("a_form_tracks", "*", $where_sql, array("created_at DESC"), "$limit_clause OFFSET $offset");
+      $fields = AFormsTomM8::get_results("a_form_fields", "*", "form_id=".($_GET["id"]), array());
       
-      $total_tracks = count(tom_get_results("a_form_tracks", "*", $where_sql, array("created_at DESC")));
+      $total_tracks = count(AFormsTomM8::get_results("a_form_tracks", "*", $where_sql, array("created_at DESC")));
 
       if ($total_tracks > 0) {
-        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, ($_GET["a_form_tracks_page"]), "?page=a-forms/a-forms-tracking.php&action=show&id=".($_GET["id"])."&search_text=".(tom_get_query_string_value("search_text"))."&search_date_from=".(tom_get_query_string_value("search_date_from"))."&search_date_to=".(tom_get_query_string_value("search_date_to")), "ASC", "top");
+        AFormsTomM8::generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, ($_GET["a_form_tracks_page"]), "?page=a-forms/a-forms-tracking.php&action=show&id=".($_GET["id"])."&search_text=".(AFormsTomM8::get_query_string_value("search_text"))."&search_date_from=".(AFormsTomM8::get_query_string_value("search_date_from"))."&search_date_to=".(AFormsTomM8::get_query_string_value("search_date_to")), "ASC", "top");
       ?>
         <table id="tracking">
           <thead>
@@ -70,7 +70,7 @@ final class AdminAFormTrackingPage {
                 echo("<td>");
                 if ($content != "" && $field->field_type == "file") {
                   $tomm8te_nonce = wp_create_nonce( "tomm8te_download_file_nonce" );
-                  echo("<a href='".get_option("siteurl")."/wp-admin/admin.php?page=tom-m8te/tom-m8te-story.php&tomm8te_download=true&_tomm8te_nonce=".$tomm8te_nonce."&file=".$content."'>download</a>");
+                  echo("<a href='".get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&tomm8te_download=true&_tomm8te_nonce=".$tomm8te_nonce."&file=".$content."'>download</a>");
                 } else {
                   echo(preg_replace("/, $/", "", esc_html($content)));
                 }
@@ -86,12 +86,12 @@ get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&act
           </tbody>
         </table>
         <?php
-        tom_generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"], "ASC", "bottom");
+        AFormsTomM8::generate_datatable_pagination("a_form_tracks", $total_tracks, $limit_clause, $_GET["a_form_tracks_page"], "?page=a-forms/a-forms-tracking.php&action=show&id=".$_GET["id"], "ASC", "bottom");
     }
 	}
 
 	public static function viewPage() {
-		$view = tom_get_row_by_id("a_form_tracks", "*", "ID", $_GET["id"]);
+		$view = AFormsTomM8::get_row_by_id("a_form_tracks", "*", "ID", $_GET["id"]);
     echo "<p><textarea rows='40' cols='160'>".esc_html(stripcslashes($view->content))."</textarea></p>";
     echo("<p><a href='".get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms-tracking.php&action=show&id=".$view->form_id."'>Back</a></p>");
 	}

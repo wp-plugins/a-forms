@@ -8,7 +8,7 @@ final class AdminAFormSectionsValidation {
   }
 
 	public static function is_valid() {
-		return tom_validate_form(AdminAFormSectionsValidation::array_validation_rules());
+		return AFormsTomM8::validate_form(AdminAFormSectionsValidation::array_validation_rules());
 	}
 }
 ?>

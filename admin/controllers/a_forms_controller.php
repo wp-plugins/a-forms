@@ -1,7 +1,7 @@
 <?php
 final class AdminAFormsController {
 	public static function indexAction() {
-		$forms = tom_get_results("a_form_forms", "*", "");
+		$forms = AFormsTomM8::get_results("a_form_forms", "*", "");
     if (count($forms) == 0) {
       $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&action=new";
       echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
@@ -25,15 +25,15 @@ final class AdminAFormsController {
 
     $to_email_valid = true;
     if ($_POST["include_admin_in_emails"] != '1') {
-      $to_email_valid = tom_validate_value("required", $_POST["to_email"], "to_email_error");
+      $to_email_valid = AFormsTomM8::validate_value("required", $_POST["to_email"], "to_email_error");
     }
 
     $fields_valid = AdminAFormFieldsController::updateAction();
 
     if ($send_confirmation_email_valid && $to_email_valid && $form_valid && $fields_valid) {
 
-      $valid = tom_update_record_by_id("a_form_forms", 
-      tom_get_form_query_strings("a_form_forms", array("created_at", "updated_at"), array("updated_at" => gmdate( 'Y-m-d H:i:s'))), "ID", $_POST["ID"]);
+      $valid = AFormsTomM8::update_record_by_id("a_form_forms", 
+      AFormsTomM8::get_form_query_strings("a_form_forms", array("created_at", "updated_at"), array("updated_at" => gmdate( 'Y-m-d H:i:s'))), "ID", $_POST["ID"]);
       
       if ($valid && $fields_valid) {
         if ($_POST["sub_action"] == "Update") {
@@ -66,13 +66,13 @@ final class AdminAFormsController {
 
     if ($send_confirmation_email_valid && $form_valid) {
       $current_datetime = gmdate( 'Y-m-d H:i:s');
-      $valid = tom_insert_record("a_form_forms", 
-        tom_get_form_query_strings("a_form_forms", array("ID", "created_at", "updated_at"), array("created_at" => $current_datetime)));
+      $valid = AFormsTomM8::insert_record("a_form_forms", 
+        AFormsTomM8::get_form_query_strings("a_form_forms", array("ID", "created_at", "updated_at"), array("created_at" => $current_datetime)));
       
       if ($valid) {
         global $wpdb;
         $form_id = $wpdb->insert_id;
-        tom_insert_record("a_form_sections", 
+        AFormsTomM8::insert_record("a_form_sections", 
           array("section_name" => "Form Fields",
                 "form_id" => $form_id, 
                 "created_at" => $current_datetime
@@ -80,16 +80,16 @@ final class AdminAFormsController {
         );
         $section_id = $wpdb->insert_id;
         
-        tom_insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Name", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 0));
+        AFormsTomM8::insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Name", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 0));
         $from_name_id = $wpdb->insert_id;
-        tom_insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required email", "field_label" => "Email", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 1));
+        AFormsTomM8::insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required email", "field_label" => "Email", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 1));
         $from_email_id = $wpdb->insert_id;
-        tom_insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Subject", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 2));
+        AFormsTomM8::insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Subject", "field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 2));
         $from_subject_id = $wpdb->insert_id;
-        tom_insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Phone","field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 3));
-        tom_insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Message", "field_type" => "textarea", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 4));
+        AFormsTomM8::insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Phone","field_type" => "text", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 3));
+        AFormsTomM8::insert_record("a_form_fields", array("form_id" => $form_id, "validation" => "required", "field_label" => "Message", "field_type" => "textarea", "section_id" => $section_id, "created_at" => $current_datetime, "field_order" => 4));
 
-        $valid = tom_update_record_by_id("a_form_forms", array(
+        $valid = AFormsTomM8::update_record_by_id("a_form_forms", array(
           "field_name_id" => $from_name_id,
           "field_email_id" => $from_email_id,
           "field_subject_id" => $from_subject_id
@@ -107,9 +107,9 @@ final class AdminAFormsController {
 
 	public static function deleteAction() {
 		// Delete record by id.
-    tom_delete_record_by_id("a_form_forms", "ID", $_GET["id"]);
-    tom_delete_record_by_id("a_form_sections", "form_id", $_GET["id"]);
-    tom_delete_record_by_id("a_form_fields", "form_id", $_GET["id"]);
+    AFormsTomM8::delete_record_by_id("a_form_forms", "ID", $_GET["id"]);
+    AFormsTomM8::delete_record_by_id("a_form_sections", "form_id", $_GET["id"]);
+    AFormsTomM8::delete_record_by_id("a_form_fields", "form_id", $_GET["id"]);
     $url = get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php&message=Record Deleted";
     echo("<meta http-equiv='refresh' content='0;url=".$url."/'>");
     echo("<script language='javascript'>window.location='".$url."';</script>");

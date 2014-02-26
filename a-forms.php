@@ -10,8 +10,6 @@ Installation:
 
 2) Download the latest from:
 
-http://wordpress.org/extend/plugins/tom-m8te 
-
 http://wordpress.org/extend/plugins/jquery-ui-theme 
 
 http://wordpress.org/extend/plugins/a-forms
@@ -20,10 +18,18 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 1.6.4
+Version: 2.0.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
+
+if (!class_exists("AFormsTomM8")) {
+  require_once("lib/tom-m8te.php");
+}
+
+if (get_option("aforms_include_securimage") == "1" && !class_exists("Securimage")) {
+  require_once('lib/securimage/securimage.php');
+}
 
 require_once("admin/controllers/a_forms_controller.php");
 require_once("admin/pages/a_forms_page.php");
@@ -162,6 +168,19 @@ register_activation_hook( __FILE__, 'a_forms_activate' );
 //call register settings function
 add_action( 'admin_init', 'register_a_forms_settings' );
 function register_a_forms_settings() {
+
+  if (isset($_REQUEST['tomm8te_download']) && $_REQUEST['tomm8te_download'] != "" && wp_verify_nonce($_REQUEST['_tomm8te_nonce'], "tomm8te_download_file_nonce")) {
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: private",false);
+    header("Content-Disposition: attachment; filename=".$_GET["file"].";" );
+    header("Content-Transfer-Encoding: binary");
+    header("Content-Length: ".filesize($_GET["file"]));
+    echo file_get_contents($_GET["file"]);
+    exit;
+  }
+
   register_setting( 'a-forms-settings-group', 'a_forms_admin_email' );
   register_setting( 'a-forms-settings-group', 'a_forms_mail_host' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_auth' );
@@ -170,6 +189,7 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_enable_ssl' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
+  register_setting( 'a-forms-settings-group', 'aforms_include_securimage' );
 
   global $wpdb;
   $a_form_forms_table = $wpdb->prefix . "a_form_forms";
@@ -181,28 +201,18 @@ function register_a_forms_settings() {
 }
 
 function are_a_forms_dependencies_installed() {
-  return is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php");
+  return is_plugin_active("jquery-ui-theme/jquery-ui-theme.php");
 }
 
 add_action( 'admin_notices', 'a_forms_notice_notice' );
 function a_forms_notice_notice(){
   $activate_nonce = wp_create_nonce( "activate-a-forms-dependencies" );
-  $tom_active = is_plugin_active("tom-m8te/tom-m8te.php");
   $jquery_ui_theme_active = is_plugin_active("jquery-ui-theme/jquery-ui-theme.php");
-  if (!($tom_active && $jquery_ui_theme_active)) { ?>
+  if (!($jquery_ui_theme_active)) { ?>
     <div class='updated below-h2'><p>Before you can use A Forms, please install/activate the following plugin(s):</p>
     <ul>
-      <?php if (!$tom_active) { ?>
-        <li>
-          <a target="_blank" href="http://wordpress.org/extend/plugins/tom-m8te/">Tom M8te</a> 
-           &#8211; 
-          <?php if (file_exists(ABSPATH."/wp-content/plugins/tom-m8te/tom-m8te.php")) { ?>
-            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/?a_forms_install_dependency=tom-m8te&_wpnonce=<?php echo($activate_nonce); ?>">Activate</a>
-          <?php } else { ?>
-            <a href="<?php echo(get_option("siteurl")); ?>/wp-admin/plugin-install.php?tab=plugin-information&plugin=tom-m8te&_wpnonce=<?php echo($activate_nonce); ?>&TB_iframe=true&width=640&height=876">Install</a> 
-          <?php } ?>
-        </li>
-      <?php }
+      <?php 
+
       if (!$jquery_ui_theme_active) { ?>
         <li>
           <a target="_blank" href="http://wordpress.org/extend/plugins/jquery-ui-theme/">JQuery UI Theme</a>
@@ -228,11 +238,6 @@ function register_a_forms_install_dependency_settings() {
       switch ($_GET["a_forms_install_dependency"]) {
         case 'jquery-ui-theme':
           activate_plugin('jquery-ui-theme/jquery-ui-theme.php', 'plugins.php?error=false&plugin=jquery-ui-theme.php');
-          wp_redirect(get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php");
-          exit();
-          break; 
-        case 'tom-m8te':  
-          activate_plugin('tom-m8te/tom-m8te.php', 'plugins.php?error=false&plugin=tom-m8te.php');
           wp_redirect(get_option("siteurl")."/wp-admin/admin.php?page=a-forms/a-forms.php");
           exit();
           break;   
@@ -268,8 +273,8 @@ function aform_css_file_selector() {
 add_action('wp_ajax_add_field_to_section', 'add_field_to_section');
 function add_field_to_section() {
   global $wpdb;
-  $section = tom_get_row_by_id("a_form_sections", "*", "ID", ($_POST["section_id"]));
-  tom_insert_record("a_form_fields", array("field_order" => ($_POST["field_order"]), "section_id" => ($_POST["section_id"]), "form_id" => $section->form_id));
+  $section = AFormsTomM8::get_row_by_id("a_form_sections", "*", "ID", ($_POST["section_id"]));
+  AFormsTomM8::insert_record("a_form_fields", array("field_order" => ($_POST["field_order"]), "section_id" => ($_POST["section_id"]), "form_id" => $section->form_id));
   echo $section->ID."::".$wpdb->insert_id;
   die();  
 }
@@ -390,7 +395,7 @@ function a_form_router() {
     ?>
     <div class="clear"></div>
     <?php 
-    tom_add_social_share_links("http://wordpress.org/extend/plugins/a-forms/");
+    AFormsTomM8::add_social_share_links("http://wordpress.org/extend/plugins/a-forms/");
   }
   
 }
@@ -444,7 +449,7 @@ class AFormFormWidget extends WP_Widget {
     if ( isset( $instance[ 'a_form_selection' ] ) ) {
       $a_form_selection = $instance[ 'a_form_selection' ];
     }
-    $aforms_list = tom_get_results("a_form_forms", "*", "");
+    $aforms_list = AFormsTomM8::get_results("a_form_forms", "*", "");
     ?>
     <p>
       <label for="<?php echo $this->get_field_id( 'a_form_selection' ); ?>">Select Form</label> 
@@ -515,7 +520,7 @@ function a_form_shortcode($atts) {
     $return_content = "";
     $attachment_urls = array();
     
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
     // Check to see if User submits a form action.

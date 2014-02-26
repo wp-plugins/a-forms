@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 1.6.4
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,8 +20,6 @@ A wordpress plugin that allows you to add a form on your website. It's quite eas
 
 2) Download the latest from:
 
-http://wordpress.org/extend/plugins/tom-m8te 
-
 http://wordpress.org/extend/plugins/jquery-ui-theme 
 
 http://wordpress.org/extend/plugins/a-forms
@@ -32,6 +30,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 2.0.0 =
+
+* Removed Tom M8te dependency.
 
 = 1.6.4 =
 
@@ -158,6 +160,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 2.0.0 =
+
+* Removed Tom M8te dependency.
 
 = 1.6.4 =
 

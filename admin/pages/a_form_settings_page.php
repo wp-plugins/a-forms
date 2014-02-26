@@ -20,6 +20,22 @@ final class AdminAFormSettingsPage {
 		            <span class="example">e.g: admin@yourcompany.com.au</span>
 		          </td>
 		        </tr>
+
+		        <tr valign="top">
+		          <th scope="row">
+		            <label for="aforms_include_securimage">Include Securimage Library:</label>
+		          </th>
+		          <td>
+		            <input type="hidden" name="aforms_include_securimage" value="0" />
+		            <input type="checkbox" id="aforms_include_securimage" name="aforms_include_securimage" value="1"
+		              <?php
+		                if (get_option("aforms_include_securimage") == "1") {
+		                  echo "checked";
+		                }
+		              ?>
+		             />
+		          </td>
+		        </tr>
 		      </tbody>
 		    </table>
 

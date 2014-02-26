@@ -5,12 +5,12 @@ final class AFormHelper {
   // Add the fields submitted into a global variable called "a_form_field_values".
   // Add the file names uploaded into a global variable called "smtp_attachment_urls".
 	public static function create_email_content($atts) {
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $field_values = array();
     $smtp_attachment_urls = array();
     // Construct email content.
-    $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'", array("field_order"));
+    $all_fields = AFormsTomM8::get_results("a_form_fields", "*", "form_id='".$atts["id"]."'", array("field_order"));
     foreach ($all_fields as $field) {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
 

@@ -5,18 +5,18 @@ final class AdminAFormFieldsPage {
     if ($instance == null) {
       $placeholder = "ph_";
     }
-    tom_add_form_field($instance, "hidden", "FID", $placeholder."FID", $placeholder."FID", array("class" => "fid"), "span", array(), array(), $index);  
-    tom_add_form_field($instance, "hidden", "field_order", $placeholder."field_order", $placeholder."field_order", array("class" => "field_order"), "span", array(), array(), $index); 
-    tom_add_form_field($instance, "hidden", "Section ID", $placeholder."section_id", $placeholder."section_id", array("class" => "section_id"), "span", array(), array(), $index);  
-    tom_add_form_field($instance, "text", "Label", $placeholder."field_label", $placeholder."field_label", array("class" => "text"), "span", array(), array(), $index);  
-    tom_add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "hidden" => "hidden", "placeholder_text" => "placeholder_text", "select" => "select", "textarea" => "textarea", "placeholder_textarea" => "placeholder_textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);
+    AFormsTomM8::add_form_field($instance, "hidden", "FID", $placeholder."FID", $placeholder."FID", array("class" => "fid"), "span", array(), array(), $index);  
+    AFormsTomM8::add_form_field($instance, "hidden", "field_order", $placeholder."field_order", $placeholder."field_order", array("class" => "field_order"), "span", array(), array(), $index); 
+    AFormsTomM8::add_form_field($instance, "hidden", "Section ID", $placeholder."section_id", $placeholder."section_id", array("class" => "section_id"), "span", array(), array(), $index);  
+    AFormsTomM8::add_form_field($instance, "text", "Label", $placeholder."field_label", $placeholder."field_label", array("class" => "text"), "span", array(), array(), $index);  
+    AFormsTomM8::add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "hidden" => "hidden", "placeholder_text" => "placeholder_text", "select" => "select", "textarea" => "textarea", "placeholder_textarea" => "placeholder_textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);
     ?>
     <ul class="validation-controls">
-      <?php tom_add_form_field($instance, "checkbox", "", $placeholder."validation", $placeholder."validation", array(), "li", array(), array("required" => "required", "email" => "email"), $index); ?>
+      <?php AFormsTomM8::add_form_field($instance, "checkbox", "", $placeholder."validation", $placeholder."validation", array(), "li", array(), array("required" => "required", "email" => "email"), $index); ?>
     </ul>
 
     <?php
-    tom_add_form_field($instance, "hidden", "", $placeholder."value_options", $placeholder."value_options", array("class" => "value-options"), "span", array(), array(), $index);  
+    AFormsTomM8::add_form_field($instance, "hidden", "", $placeholder."value_options", $placeholder."value_options", array("class" => "value-options"), "span", array(), array(), $index);  
     ?>
     <div class="value-option-controls">
       <ul>
@@ -28,7 +28,7 @@ final class AdminAFormFieldsPage {
     <div class="file-ext-controls">
       <ul>
         <li><strong>Restrict File Extension</strong></li>
-        <?php tom_add_form_field($instance, "checkbox", "", $placeholder."file_ext_allowed", $placeholder."file_ext_allowed", array(), "li", array(), array(".jpg" => ".jpg", ".png" => ".png", ".pdf" => ".pdf", ".doc" => ".doc", ".txt" => ".txt"), $index); ?>
+        <?php AFormsTomM8::add_form_field($instance, "checkbox", "", $placeholder."file_ext_allowed", $placeholder."file_ext_allowed", array(), "li", array(), array(".jpg" => ".jpg", ".png" => ".png", ".pdf" => ".pdf", ".doc" => ".doc", ".txt" => ".txt"), $index); ?>
       </ul>
     </div>
 

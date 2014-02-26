@@ -2,13 +2,13 @@
 final class AFormController {
 
   public static function formAction($atts) {
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $attachment_urls = array();
     if (isset($_POST["a_form_attachment_urls"]) && $_POST["a_form_attachment_urls"] != "") {
       $attachment_urls = explode("::", ($_POST["a_form_attachment_urls"]));
     }
-    $all_fields = tom_get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
+    $all_fields = AFormsTomM8::get_results("a_form_fields", "*", "form_id='".$atts["id"]."'");
     foreach ($all_fields as $field) {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
 
@@ -33,7 +33,7 @@ final class AFormController {
   public static function submitAction($atts) {
     $current_datetime = gmdate( 'Y-m-d H:i:s');
     $email_content = AFormHelper::create_email_content($atts);
-    $form = tom_get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
     $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
     $field_values = $GLOBALS["a_form_field_values"];
 
@@ -42,15 +42,15 @@ final class AFormController {
     $from_name = "";
     $user_email = "";
     if ($form->field_name_id != "") {
-      $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
+      $row = AFormsTomM8::get_row_by_id("a_form_fields", "*", "FID", $form->field_name_id);
       $from_name = ($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
     }
     if ($form->field_email_id != "") {
-      $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
+      $row = AFormsTomM8::get_row_by_id("a_form_fields", "*", "FID", $form->field_email_id);
       $user_email = ($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
     }
     if ($form->field_subject_id != "") {
-      $row = tom_get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
+      $row = AFormsTomM8::get_row_by_id("a_form_fields", "*", "FID", $form->field_subject_id);
       if (isset($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))])) {
         $subject .= " - ".($_POST[$form_name.str_replace(" ", "_", strtolower($row->field_label))]);
       }
@@ -83,7 +83,7 @@ final class AFormController {
       $secure_algorithms["ssl"] = "ssl";
     }
 
-    $mail_message = tom_send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
+    $mail_message = AFormsTomM8::send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
     
     if ($mail_message == "<div class='success'>Message sent!</div>") {
 
@@ -92,7 +92,7 @@ final class AFormController {
       }
 
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_POST["a_form_referrer"], "fields_array" => serialize($field_values)));  
+        AFormsTomM8::insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_POST["a_form_referrer"], "fields_array" => serialize($field_values)));  
       }        
 
       if ($form->success_redirect_url != "") {
@@ -102,7 +102,7 @@ final class AFormController {
 
     } else {
       if ($form->tracking_enabled) {
-        tom_insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_POST["a_form_referrer"], "fields_array" => serialize($field_values)));
+        AFormsTomM8::insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => "Error Message: ".$mail_message.".\n\nContent: ".$email_content, "track_type" => "Failed Email", "referrer_url" => $_POST["a_form_referrer"], "fields_array" => serialize($field_values)));
       }
     }
 

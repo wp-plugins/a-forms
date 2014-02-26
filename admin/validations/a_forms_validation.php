@@ -12,7 +12,7 @@ final class AdminAFormsValidation {
   }
 
 	public static function is_valid() {
-		return tom_validate_form(AdminAFormsValidation::array_validation_rules());
+		return AFormsTomM8::validate_form(AdminAFormsValidation::array_validation_rules());
 	}
 	
 }
