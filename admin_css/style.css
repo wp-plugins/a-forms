@@ -1,0 +1,194 @@
+.a-form div.postbox {
+	float: left;
+	width: 1110px;
+}
+
+#setting_column, #form_column, li.shiftable {
+	float: left;
+	width: 330px;
+}
+
+#setting_column ul, #setting_column ul li {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+#setting_column ul {
+	padding: 0 0 1em 0;
+}
+
+#form_column {
+	width: 620px;
+}
+
+form {
+	width: 1035px;
+}
+
+td.shiftable, li.shiftable {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+
+li.shiftable {
+	width: 740px;
+}
+
+li.shiftable h3 {
+	background: none;
+	display: inline;
+	margin-bottom: 0;
+}
+
+li.shiftable, table tr.shiftable td {
+	cursor: move;
+}
+
+li.shiftable span, li.shiftable ul, li.shiftable div.value-option-controls, li.shiftable div.file-ext-controls {
+	display: block;
+	float: left;
+}
+
+li.shiftable span.colon {
+	float: none;
+	display: inline;
+	margin: 0;
+}
+
+li.shiftable div.value-option-controls, li.shiftable div.file-ext-controls {
+	display: none;
+	width: 205px;
+	margin-bottom: 40px;
+}
+
+li.shiftable div.value-option-controls strong {
+	float: left;
+	display: block;
+	width: 57px;
+	margin-left: 3px;
+}
+li.shiftable div.value-option-controls strong.label {
+	margin-right: 11px;
+}
+
+li.shiftable div.value-option-controls ul {
+	float: none;
+}
+
+li.shiftable, .actions {
+	clear: both;
+}
+
+li.shiftable.odd, table tbody tr.odd td {
+	background: #cac9c9;
+}
+li.shiftable.even, table tbody tr.even td {
+	background: #dfdfdf;
+}
+
+#settings_form li.shiftable.odd, #settings_form table tbody tr.odd td, #settings_form li.shiftable.even, #settings_form table tbody tr.even td {
+	background: none;
+}
+
+li.shiftable.odd.section-heading, li.shiftable.even.section-heading {
+	background: none;
+}
+
+li.shiftable ul {
+	margin-right: 20px;
+}
+
+li.shiftable .delete {
+	float: right;
+	display: block;
+	margin: 5px;
+}
+
+#fields_sortable li input, #fields_sortable li select {
+	margin-top: 0;
+	margin-right: 10px;
+}
+#fields_sortable .value-option-controls li input, #fields_sortable .value-option-controls li select {
+	margin-right: 0;
+}
+#fields_sortable .value-option-controls li input, #fields_sortable .value-option-controls li select, #fields_sortable .value-option-controls li input {
+	display: inline;
+}
+
+#fields_row_clone, #fields_row_clone * {
+	display: none;
+}
+
+form label {
+	float: left;
+	width: 130px;
+	margin-right: 10px;
+}
+
+form p {
+	clear: both;
+}
+
+form span.error {
+	color: #ff0000;
+	display: block;
+	margin-left: 142px;
+}
+
+form #form_column span.error {
+	margin-left: 77px;
+}
+
+form li.shiftable span.error {
+	float: none;
+}
+
+form #css_content {
+	width: 900px;
+	height: 700px;
+}
+
+form ul.options input {
+	float: left;
+	margin-right: 5px;
+}
+
+form ul.options {
+	padding-bottom: 30px;
+}
+
+form ul.options label {
+	width: auto;
+}
+
+form input.text, form textarea {
+	width: 210px;
+}
+
+form #setting_column input.text, form #setting_column textarea {
+	width: 160px;
+}
+
+form textarea {
+	height: 200px;
+}
+
+form #fields_sortable label {
+	width: auto;
+}
+form #fields_sortable input.text {
+	width: 60px;
+}
+
+.pagination, .pagination li {
+	display: inline;
+}
+
+table {
+	margin: 20px 0;
+}
+
+table#tracking td, table#tracking th {
+	text-align: center;
+}
