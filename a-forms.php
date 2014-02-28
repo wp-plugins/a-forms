@@ -18,7 +18,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.0.0
+Version: 2.0.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -511,63 +511,62 @@ function a_form_ajax_responder() {
 add_shortcode( 'a-form', 'a_form_shortcode' );
 
 function a_form_shortcode($atts) {
-  if (is_plugin_active("tom-m8te/tom-m8te.php") && is_plugin_active("jquery-ui-theme/jquery-ui-theme.php")) {
+  
+  $captcha_valid = true;
+  $form_valid = false;
+  $nonce_passed = true;
+  $mail_message = "";
+  $return_content = "";
+  $attachment_urls = array();
+  
+  $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
+  $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
 
-    $captcha_valid = true;
-    $form_valid = false;
-    $nonce_passed = true;
-    $mail_message = "";
-    $return_content = "";
-    $attachment_urls = array();
+  // Check to see if User submits a form action.
+  if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
+
+    // User has submitted an aform.
+    $form_valid = AFormValidation::is_valid($atts);
     
-    $form = AFormsTomM8::get_row_by_id("a_form_forms", "*", "ID", $atts["id"]);
-    $form_name = "a_form_".str_replace(" ", "_", strtolower($form->form_name))."_";
-
-    // Check to see if User submits a form action.
-    if (isset($_POST["send_a_form"]) && ($atts["id"] == $_POST["send_a_form"])) {
-
-      // User has submitted an aform.
-      $form_valid = AFormValidation::is_valid($atts);
-      
-      // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
-      if (isset($_POST["action"]) && $_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
-        $captcha_valid = AFormValidation::is_valid_captcha($atts);
-      }
-      
-      // Check to see if form is valid.
-      $nonce_passed = wp_verify_nonce($_REQUEST["_wpnonce"], "a-forms-contact-a-form");
-      if ($nonce_passed && $form_valid && $captcha_valid) {
-        try {
-          $attachment_urls = AFormController::formAction($atts);
-        } catch(Exception $e) {
-          $form_valid = false;
-        }
-        
-        // Form is valid.
-        if (($_POST["action"]) == "Send") {
-          $mail_message = AFormController::submitAction($atts);
-        }
-      } else {
-
-        // Check to see if the input field values are valid, but not the wpnonce value.
-        if ($form_valid && $captcha_valid && $nonce_passed == false) {
-          // The input field values are valid except the wpnonce value. Therefore there must have been a cross site spam attack. So display fail send email message.
-          $return_content .= "<div class='a-form error'>Failed to send your message. Please try again later.</div>";
-        }
+    // Check to see if the user has clicked the Send button and check to see if the form is using a captcha.
+    if (isset($_POST["action"]) && $_POST["action"] == "Send" && isset($_POST[$form_name."captcha"]) && $form->include_captcha) {
+      $captcha_valid = AFormValidation::is_valid_captcha($atts);
+    }
+    
+    // Check to see if form is valid.
+    $nonce_passed = wp_verify_nonce($_REQUEST["_wpnonce"], "a-forms-contact-a-form");
+    if ($nonce_passed && $form_valid && $captcha_valid) {
+      try {
+        $attachment_urls = AFormController::formAction($atts);
+      } catch(Exception $e) {
         $form_valid = false;
-
       }
-
+      
+      // Form is valid.
+      if (($_POST["action"]) == "Send") {
+        $mail_message = AFormController::submitAction($atts);
+      }
     } else {
-      $_SESSION["a_forms_referrer"] = $_SERVER["HTTP_REFERER"];
+
+      // Check to see if the input field values are valid, but not the wpnonce value.
+      if ($form_valid && $captcha_valid && $nonce_passed == false) {
+        // The input field values are valid except the wpnonce value. Therefore there must have been a cross site spam attack. So display fail send email message.
+        $return_content .= "<div class='a-form error'>Failed to send your message. Please try again later.</div>";
+      }
+      $form_valid = false;
+
     }
 
-    if (preg_match("/class='success'/", $mail_message)) {
-      return $mail_message;
-    } else {
-      return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
-    }
+  } else {
+    $_SESSION["a_forms_referrer"] = $_SERVER["HTTP_REFERER"];
   }
+
+  if (preg_match("/class='success'/", $mail_message)) {
+    return $mail_message;
+  } else {
+    return $mail_message.AFormPage::render_form($atts, $return_content, $form_valid, $attachment_urls);
+  }
+
 }
 
 add_action('wp_head', 'add_a_forms_js_and_css');
