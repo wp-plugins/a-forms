@@ -797,7 +797,7 @@ if (!class_exists("AFormsTomM8")) {
       } else if ($field_type == "placeholder_textarea") {
         echo("<textarea id='$field_id_with_without_index' name='$field_name_with_without_array' ".$field_content." placeholder='".strip_tags($field_label)."'>".$field_value."</textarea>");
       } else if ($field_type == "captcha") {
-        echo("<img id='$field_id_with_without_index' src='".get_option("siteurl")."/wp-content/plugins/a-forms/securimage/securimage_show.php' />");
+        echo("<img id='$field_id_with_without_index' src='".get_option("siteurl")."/wp-content/plugins/a-forms/lib/securimage/securimage_show.php' />");
         echo("<a href='#' onclick=\"document.getElementById('".$field_id_with_without_index."').src = '".get_option("siteurl")."/wp-content/plugins/a-forms/lib/securimage/securimage_show.php?' + Math.random(); return false\">[ Different Image ]</a><input type='text' name='".$field_name."' size='10' maxlength='6' />");
       } else if ($field_type == "select") {
         echo("<select id='$field_id_with_without_index' name='$field_name_with_without_array' ".$field_content.">");
