@@ -596,7 +596,7 @@ if (!class_exists("AFormsTomM8")) {
     function validate_value($validation, $value, $error_session_name) {
       $validate_form = true;
       if (preg_match("/required | required|^required$/i", $validation)) {
-        if ($value == "") {
+        if ($value == "" || str_replace(" ", "", $value) == "") {
           $_SESSION[$error_session_name] .= " must have a value. ";
           $validate_form = false;
         }
