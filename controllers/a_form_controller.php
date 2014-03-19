@@ -83,7 +83,7 @@ final class AFormController {
       $secure_algorithms["ssl"] = "ssl";
     }
 
-    $mail_message = AFormsTomM8::send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);        
+    $mail_message = AFormsTomM8::send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);       
     
     if ($mail_message == "<div class='success'>Message sent!</div>") {
 

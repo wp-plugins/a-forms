@@ -65,6 +65,14 @@ final class AFormValidation {
       $field_name = str_replace(" ", "_", strtolower($field->field_label));
       $validation_array[$form_name.$field_name] = $field->validation;
     }
+
+    // Add additional validation.
+    if (isset($GLOBALS["aforms_additional_validations_for_".$atts["id"]])) {
+      $additional_validation_array = $GLOBALS["aforms_additional_validations_for_".$atts["id"]];
+      // Merge new validation with existing validations.
+      $validation_array = array_merge($validation_array, $additional_validation_array);
+    }
+
     return AFormsTomM8::validate_form($validation_array);
   }
 }

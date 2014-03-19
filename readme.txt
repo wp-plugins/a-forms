@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,23 @@ Create easy contact forms.
 == Description ==
 
 A wordpress plugin that allows you to add a form on your website. It's quite easy to configure, some what like C Forms II, but you have the ability to get regular updates and its available on the Wordpress Plugin site.
+
+Since version 2.0.2, you can now create advanced validation rules. There are unlimited amount of validation rules that you could have in a form which makes it difficult to manage using a UI. In A Forms you can now create a Global variable called $GLOBALS["aforms_additional_validations_for_4"] (where 4 is the id of the form) in your themes function file and set a validation array to it. 
+
+For example lets say you have an email field, a contact field and a preferred method of contact field. The preferred method of contact field is a checkbox field with the values Email and Phone. You want to make sure your visitor fills in Phone if Phone is selected by the preferred method of contact. All you need to do is assign an array like $GLOBALS["aforms_additional_validations_for_4"]["a_form_contact_us_phone"] = "required" to $GLOBALS["aforms_additional_validations_for_4"] (remember to replace the 4 with your forms id) if the phone field is empty while the preferred method of contact is Phone.
+
+Here is some sample code:
+
+add_action( 'init', 'register_a_forms_additional_validations' );
+function register_a_forms_additional_validations() {
+	$GLOBALS["aforms_additional_validations_for_4"] = array();
+	if (isset($_POST["a_form_contact_us_preferred_method_of_contact_1"]) && isset($_POST["a_form_contact_us_phone"]) && $_POST["a_form_contact_us_preferred_method_of_contact_1"] == "Phone" && $_POST["a_form_contact_us_phone"] == "") {
+		$GLOBALS["aforms_additional_validations_for_4"]["a_form_contact_us_phone"] = "required";
+	}
+	if (isset($_POST["a_form_contact_us_preferred_method_of_contact_0"]) && isset($_POST["a_form_contact_us_email"]) && $_POST["a_form_contact_us_preferred_method_of_contact_0"] == "EMail" && $_POST["a_form_contact_us_email"] == "") {
+		$GLOBALS["aforms_additional_validations_for_4"]["a_form_contact_us_email"] = "required";
+	}
+}
 
 == Installation ==
 
@@ -30,6 +47,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 2.0.2 =
+
+* Added in advanced validation ability, please see description above. Also checkout /a-forms/validations/a_form_validation.php and look at method is_valid($atts);
 
 = 2.0.0 =
 
@@ -160,6 +181,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 2.0.2 =
+
+* Added in advanced validation ability, please see description above. Also checkout /a-forms/validations/a_form_validation.php and look at method is_valid($atts);
 
 = 2.0.0 =
 
