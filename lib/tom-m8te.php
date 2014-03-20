@@ -647,6 +647,50 @@ if (!class_exists("AFormsTomM8")) {
             $validate_form = false;
           }
         }
+
+        if (preg_match("/postcode | postcode|^postcode$/i", $validation)) {
+          if ((!is_numeric($value)) || (strlen($value) < 4 || strlen($value) > 5)) {
+            if (!preg_match("/must be a valid postcode/i", $_SESSION[$error_session_name])) {
+              $_SESSION[$error_session_name] .= " must be a valid postcode. ";
+            }
+            return false;
+          }
+        }
+
+        if (preg_match("/phone | phone|^phone$/i", $validation)) {
+          $phone_no = str_replace(' ', '', $value); 
+          if (strlen($phone_no) < 8) {
+            if (!preg_match("/must be a valid phone number/i", $_SESSION[$error_session_name])) {
+              $_SESSION[$error_session_name] .= " must be a valid phone number. ";
+            }
+            return false;
+          }
+
+          if (!is_numeric($phone_no)) {
+            if (!preg_match("/must only contain numbers/i", $_SESSION[$error_session_name])) {
+              $_SESSION[$error_session_name] .= " must only contain numbers. ";
+            }
+            return false;
+          }
+        }
+
+        if (preg_match("/mobile | mobile|^mobile$/i", $validation)) {
+          $mobile_no = str_replace(' ', '', $value); 
+          if (strlen($mobile_no) != 10) {
+            if (!preg_match("/must be a valid mobile number/i", $_SESSION[$error_session_name])) {
+              $_SESSION[$error_session_name] .= " must be a valid mobile number. ";
+            }
+            return false;
+          }
+
+          if (!is_numeric($mobile_no)) {
+            if (!preg_match("/must only contain numbers/i", $_SESSION[$error_session_name])) {
+              $_SESSION[$error_session_name] .= " must only contain numbers. ";
+            }
+            return false;
+          }
+        }
+
       }
 
       return $validate_form;

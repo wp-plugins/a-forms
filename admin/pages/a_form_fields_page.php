@@ -12,7 +12,36 @@ final class AdminAFormFieldsPage {
     AFormsTomM8::add_form_field($instance, "select", "Field Type *", $placeholder."field_type", $placeholder."field_type", array("class" => "field-type text"), "span", array(), array("" => "", "text" => "text", "hidden" => "hidden", "placeholder_text" => "placeholder_text", "select" => "select", "textarea" => "textarea", "placeholder_textarea" => "placeholder_textarea", "radio" => "radio", "checkbox" => "checkbox", "file" => "file"), $index);
     ?>
     <ul class="validation-controls">
-      <?php AFormsTomM8::add_form_field($instance, "checkbox", "", $placeholder."validation", $placeholder."validation", array(), "li", array(), array("required" => "required", "email" => "email"), $index); ?>
+      <?php 
+        // AFormsTomM8::add_form_field($instance, "checkbox", "", $placeholder."validation", $placeholder."validation", array(), "li", array(), array("required" => "required"), $index); 
+
+        if (isset($_REQUEST["validation"][$index])) {
+          $_GET["validation"][$index] = $_REQUEST["validation"][$index];
+        } else {
+          $_GET["validation"][$index] = $instance->validation;
+        }
+
+        if (isset($_REQUEST["validation_category"][$index])) {
+          $_GET["validation_category"][$index] = $instance->validation." ".$_REQUEST["validation_category"][$index];
+        } else {
+          $_GET["validation_category"][$index] = $instance->validation;
+        }
+
+        ?>
+        <li>
+          <input type="hidden" name="validation[<?php echo($index); ?>]" value="">
+          <input type="checkbox" id="validation_validation_<?php echo($index); ?>_required" name="validation[<?php echo($index); ?>]" value="required" <?php echo(preg_match("/required/", $instance->validation) ? "checked" : ""); ?>>
+          <label for="validation_validation_<?php echo($index); ?>_required">required</label>
+        </li>
+        <li>
+          <select id="validation_category_<?php echo($index); ?>" name="validation_category[<?php echo($index); ?>]">
+            <option value=""></option>
+            <option <?php echo(preg_match("/email/", $instance->validation) ? "selected" : ""); ?> value="email">email</option>
+            <option <?php echo(preg_match("/postcode/", $instance->validation) ? "selected" : ""); ?> value="postcode">postcode</option>
+            <option <?php echo(preg_match("/phone/", $instance->validation) ? "selected" : ""); ?> value="phone">phone</option>
+            <option <?php echo(preg_match("/mobile/", $instance->validation) ? "selected" : ""); ?> value="mobile">mobile</option>
+          </select>
+        </li>
     </ul>
 
     <?php

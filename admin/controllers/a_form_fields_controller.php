@@ -14,7 +14,7 @@ final class AdminAFormFieldsController {
               "field_label" => $_POST["field_label"][$index],
               "field_type" => $_POST["field_type"][$index],
               "field_order" => $_POST["field_order"][$index],
-              "validation" => $_POST["validation_0"][$index]." ".$_POST["validation_1"][$index],
+              "validation" => $_POST["validation"][$index]." ".$_POST["validation_category"][$index],
               "value_options" => $_POST["value_options"][$index],
               "file_ext_allowed" => AFormsTomM8::get_query_string_value("file_ext_allowed", $index)
             ),

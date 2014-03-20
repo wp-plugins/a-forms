@@ -4,7 +4,7 @@ Donate link:
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 3.8
-Stable tag: 2.0.2
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,10 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Added ability to validate against phone, mobile and postcode. Only allows numbers to be entered for phone, mobile and postcode.
 
 = 2.0.2 =
 
@@ -181,6 +185,10 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 2.1.0 =
+
+* Added ability to validate against phone, mobile and postcode. Only allows numbers to be entered for phone, mobile and postcode.
 
 = 2.0.2 =
 

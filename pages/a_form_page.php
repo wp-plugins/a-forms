@@ -168,7 +168,8 @@ final class AFormPage {
       if (isset($_SESSION[$form_name.$field_name."_error"])) {
         $error_class = "error";
       }
-      AFormsTomM8::add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type), "div", array("class" => $error_class), $value_options);
+
+      AFormsTomM8::add_form_field(null, $field->field_type, $field_label, $form_name.$field_name, $form_name.$field_name, array("class" => $field->field_type." ".$field->validation), "div", array("class" => $error_class), $value_options);
       if ($field->field_type == "file" && $field->file_ext_allowed != "") {
         $extensions_allowed = $field->file_ext_allowed;
         $extensions_allowed = preg_replace('/(\s)+/',' ', $extensions_allowed);

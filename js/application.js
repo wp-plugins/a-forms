@@ -1,5 +1,28 @@
 jQuery(function() {
 
+  jQuery("form.a-form input.phone, form.a-form input.mobile, form.a-form input.postcode").keydown(function (e) {
+      console.log(e.keyCode);
+      // Allow: backspace, delete, tab, escape and enter
+      if (jQuery.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+           // Allow: Ctrl+A
+          (e.keyCode == 65 && e.ctrlKey === true) || 
+          // Allow: Ctrl+C
+          (e.keyCode == 67 && e.ctrlKey === true) ||
+          // Allow: Ctrl+X
+          (e.keyCode == 88 && e.ctrlKey === true) || 
+          // Allow: Ctrl+V
+          (e.keyCode == 86 && e.ctrlKey === true) ||
+           // Allow: home, end, left, right
+          (e.keyCode >= 35 && e.keyCode <= 39)) {
+               // let it happen, don't do anything
+               return;
+      }
+      // Ensure that it is a number and stop the keypress
+      if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+          e.preventDefault();
+      }
+  });
+
   jQuery(document).delegate("form.a-form .next, form.a-form .prev, form.a-form .send", "click", function(e) {
 
     jQuery('#'+jQuery(this).parents("form").attr("id")).after("<img class='a-form-loading' src='"+AFormsAjax.base_url+"/wp-content/plugins/a-forms/images/progress.gif' />").find("fieldset.submit").hide();
@@ -277,7 +300,7 @@ function sort_fields() {
   });
 
   var index = 0;
-  jQuery("#fields_sortable > li.shiftable ul.options input[type=checkbox], #fields_sortable > li.shiftable ul.options input[type=hidden]").each(function(i) {
+  jQuery("#fields_sortable > li.shiftable ul.options input[type=checkbox], #fields_sortable > li.shiftable .validation-controls select, #fields_sortable > li.shiftable ul.options input[type=hidden]").each(function(i) {
     index = parseInt(jQuery(this).parents("li.shiftable:first").index()-1);
     jQuery(this).parents("li.shiftable:first").find(".field_order").val(parseInt(index+1));
     if (jQuery(this).attr("name")) {
