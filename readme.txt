@@ -3,7 +3,7 @@ Contributors: MMDeveloper
 Donate link: 
 Tags: form, contact, plugin
 Requires at least: 3.3
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@ function register_a_forms_additional_validations() {
 
 == Installation ==
 
-1) Install WordPress 3.8 or higher
+1) Install WordPress 3.9 or higher
 
 2) Download the latest from:
 
