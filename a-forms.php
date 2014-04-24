@@ -6,7 +6,7 @@ Description: Adds a contact form to your wordpress site.
 
 Installation:
 
-1) Install WordPress 3.8 or higher
+1) Install WordPress 3.9 or higher
 
 2) Download the latest from:
 
