@@ -309,7 +309,7 @@ function sort_fields() {
     if (jQuery(this).attr("id")) {
       jQuery(this).attr("id", jQuery(this).attr("id").replace(/_\d*_/, "_"+index+"_"));
     }
-    if (jQuery(this).parent().find("label")) {
+    if (jQuery(this).parent().length > 0 && jQuery(this).parent().find("label").length > 0) {
       jQuery(this).parent().find("label").attr("for",
         jQuery(this).parent().find("label").attr("for").replace(/_\d*_/, "_"+index+"_")
       );
