@@ -18,10 +18,12 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.1.1
+Version: 2.2.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
+
+require_once(ABSPATH."wp-includes/class-phpmailer.php");
 
 if (!class_exists("AFormsTomM8")) {
   require_once("lib/tom-m8te.php");
