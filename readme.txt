@@ -3,8 +3,8 @@ Contributors: MMDeveloper
 Donate link: 
 Tags: form, contact, plugin
 Requires at least: 3.3
-Tested up to: 3.9
-Stable tag: 2.2.0
+Tested up to: 4.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,7 +33,7 @@ function register_a_forms_additional_validations() {
 
 == Installation ==
 
-1) Install WordPress 3.9 or higher
+1) Install WordPress 4.0 or higher
 
 2) Download the latest from:
 
@@ -47,6 +47,14 @@ http://wordpress.org/extend/plugins/a-forms
 
 
 == Changelog ==
+
+= 2.3.1 =
+
+* UI on page/post Add A Form TinyMCE control now works in Wordpress 3.9 and higher.
+
+= 2.3.0 =
+
+* Add Google Event to the form submission. Assumes that you have installed Google Analytics on your site. If you haven't obviously don't fill in the Google Analytic Event fields.
 
 = 2.2.0 =
 
@@ -193,6 +201,14 @@ http://wordpress.org/extend/plugins/a-forms
 * Initial Commit
 
 == Upgrade notice ==
+
+= 2.3.1 =
+
+* UI on page/post Add A Form TinyMCE control now works in Wordpress 3.9 and higher.
+
+= 2.3.0 =
+
+* Add Google Event to the form submission.
 
 = 2.2.0 =
 

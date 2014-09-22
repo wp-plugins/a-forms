@@ -22,6 +22,10 @@ final class AFormPage {
       $return_content .= "<form id='".str_replace(" ", "_", strtolower($form->form_name))."' method='post' class='a-form $ajax_class' enctype='multipart/form-data'>";
     }
     $return_content .= "<input type='hidden' name='_wpnonce' value='".$aform_form_nonce."'/>";
+    $return_content .= "<input type='hidden' name='ga_category' value='".$form->ga_category."'/>";
+    $return_content .= "<input type='hidden' name='ga_action' value='".$form->ga_action."'/>";
+    $return_content .= "<input type='hidden' name='ga_label' value='".$form->ga_label."'/>";
+    $return_content .= "<input type='hidden' name='ga_value' value='".$form->ga_value."'/>";
 
     if ($form->multipage_sections == "1") {
       // Get next section

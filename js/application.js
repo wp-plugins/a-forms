@@ -27,6 +27,15 @@ jQuery(function() {
 
     jQuery('#'+jQuery(this).parents("form").attr("id")).after("<img class='a-form-loading' src='"+AFormsAjax.base_url+"/wp-content/plugins/a-forms/images/progress.gif' />").find("fieldset.submit").hide();
 
+    var ga_category = jQuery(this).parents("form.a-form").find("input[name=ga_category]").val();
+    var ga_action = jQuery(this).parents("form.a-form").find("input[name=ga_action]").val();
+    var ga_label = jQuery(this).parents("form.a-form").find("input[name=ga_label]").val();
+    var ga_value = jQuery(this).parents("form.a-form").find("input[name=ga_value]").val();
+
+    if (ga_category != "" && ga_action != "") {
+      ga('send', 'event', ga_category, ga_action, ga_label, ga_value);
+    }
+
     if (jQuery(this).parents("form.a-form").hasClass("ajaxified")) {
       e.preventDefault();
       var field_hash = {};
@@ -61,7 +70,6 @@ jQuery(function() {
       });
       return false; 
     }
-
     
   });
 

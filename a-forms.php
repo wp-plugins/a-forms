@@ -6,7 +6,7 @@ Description: Adds a contact form to your wordpress site.
 
 Installation:
 
-1) Install WordPress 3.9 or higher
+1) Install WordPress 4.0 or higher
 
 2) Download the latest from:
 
@@ -18,7 +18,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.2.0
+Version: 2.3.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -198,6 +198,17 @@ function register_a_forms_settings() {
   $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'multipage_sections'");
   if ($checkcol == 0) {
     $sql = "ALTER TABLE $a_form_forms_table ADD multipage_sections VARCHAR(1) DEFAULT 1";
+    $wpdb->query($sql); 
+  }
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'ga_category'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_category VARCHAR(255)";
+    $wpdb->query($sql);
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_action VARCHAR(255)";
+    $wpdb->query($sql);  
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_label VARCHAR(255)";
+    $wpdb->query($sql); 
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_value VARCHAR(255)";
     $wpdb->query($sql); 
   }
 }

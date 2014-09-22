@@ -115,7 +115,15 @@ final class AdminAFormsPage {
       <p><strong>Securimage Captcha doesn't work well with Ajax, if you want ajax and need a captcha, choose Math Captcha.</strong></p>
       <?php 
 
-	  ?>
+	  
+      ?>
+      <h2>Google Analytic Events</h2>
+      <?php
+      AFormsTomM8::add_form_field($instance, "text", "Category", "ga_category", "ga_category", array(), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "Action", "ga_action", "ga_action", array(), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "Label", "ga_label", "ga_label", array(), "p", array());
+      AFormsTomM8::add_form_field($instance, "text", "Value", "ga_value", "ga_value", array(), "p", array());
+    ?>
     <input type="hidden" name="action" value="<?php echo($action); ?>" />
 	  <p><input type="submit" name="sub_action" value="<?php echo($action); ?>" /> <?php if ($instance != null) { ?><input type="submit" name="sub_action" value="Save and Finish" /><?php } ?></p>
     </div>
