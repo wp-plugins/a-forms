@@ -1,6 +1,6 @@
 jQuery(function() {
 
-  jQuery("form.a-form input.phone, form.a-form input.mobile, form.a-form input.postcode").keydown(function (e) {
+  jQuery(document).delegate("form.a-form input.phone, form.a-form input.mobile, form.a-form input.postcode", "keydown", function(e) {
       console.log(e.keyCode);
       // Allow: backspace, delete, tab, escape and enter
       if (jQuery.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
