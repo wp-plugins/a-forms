@@ -46,7 +46,7 @@ http://wordpress.org/extend/plugins/a-forms
 4) Activate the plugin.
 
 
-Built for The Marketing Mix Perth: http://www.marketingmix.com.au
+Built by The Marketing Mix Perth: http://www.marketingmix.com.au
 
 
 == Changelog ==
