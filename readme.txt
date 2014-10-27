@@ -1,5 +1,5 @@
 === A Forms ===
-Contributors: MMDeveloper
+Contributors: MMDeveloper, The Marketing Mix Osborne Park Perth
 Donate link: 
 Tags: form, contact, plugin
 Requires at least: 3.3
@@ -44,6 +44,9 @@ http://wordpress.org/extend/plugins/a-forms
 3) Login to WordPress admin, click on Plugins / Add New / Upload, then upload the zip file you just downloaded.
 
 4) Activate the plugin.
+
+
+Built for The Marketing Mix Perth: http://www.marketingmix.com.au
 
 
 == Changelog ==
