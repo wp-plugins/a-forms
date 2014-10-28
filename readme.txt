@@ -31,6 +31,10 @@ function register_a_forms_additional_validations() {
 	}
 }
 
+
+Built by The Marketing Mix Perth: http://www.marketingmix.com.au
+
+
 == Installation ==
 
 1) Install WordPress 4.0 or higher
