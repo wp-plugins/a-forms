@@ -18,7 +18,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.3.2
+Version: 2.4.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */

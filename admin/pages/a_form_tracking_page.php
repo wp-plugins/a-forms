@@ -12,6 +12,24 @@ final class AdminAFormTrackingPage {
 
 	public static function showPage() {
 		?>
+
+      <h2>Summary</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: center;">Last Month</th>
+            <th style="text-align: center;">This Month</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align: center;"><?php echo AFormsTomM8::get_record_count("a_form_tracks", "created_at BETWEEN '".date("Y-m-d", mktime(0, 0, 0, date("m")-1, 1, date("Y")))."' AND '".date("Y-m-d", mktime(0, 0, 0, date("m"), 0, date("Y")))."'"); ?></td>
+            <td style="text-align: center;"><?php echo AFormsTomM8::get_record_count("a_form_tracks", "created_at BETWEEN '".date('Y-m-01')."' AND '".date('Y-m-t')."'"); ?></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Search</h2>
 		  <form action="" method="post">
         <?php AFormsTomM8::add_form_field(null, "text", "Search Text", "search_text", "search_text", array(), "p", array()); ?>
         <?php AFormsTomM8::add_form_field(null, "text", "Date From", "search_date_from", "search_date_from", array("class" => "datepicker"), "p", array()); ?>

@@ -1,10 +1,10 @@
 === A Forms ===
-Contributors: MMDeveloper, The Marketing Mix Osborne Park Perth
+Contributors: MMDeveloper
 Donate link: 
 Tags: form, contact, plugin
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 2.3.2
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,10 +31,6 @@ function register_a_forms_additional_validations() {
 	}
 }
 
-
-Built by The Marketing Mix Perth: http://www.marketingmix.com.au
-
-
 == Installation ==
 
 1) Install WordPress 4.0 or higher
@@ -50,10 +46,11 @@ http://wordpress.org/extend/plugins/a-forms
 4) Activate the plugin.
 
 
-Built by The Marketing Mix Perth: http://www.marketingmix.com.au
-
-
 == Changelog ==
+
+= 2.4.0 =
+
+* Added in summary of how many emails were sent within the previous month.
 
 = 2.3.2 =
 
@@ -212,6 +209,10 @@ Built by The Marketing Mix Perth: http://www.marketingmix.com.au
 * Initial Commit
 
 == Upgrade notice ==
+
+= 2.4.0 =
+
+* Added in summary of how many emails were sent within the previous month.
 
 = 2.3.2 =
 
