@@ -6,7 +6,7 @@ Description: Adds a contact form to your wordpress site.
 
 Installation:
 
-1) Install WordPress 4.0 or higher
+1) Install WordPress 4.2.2 or higher
 
 2) Download the latest from:
 
@@ -18,7 +18,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.4.0
+Version: 2.4.1
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -164,6 +164,24 @@ function a_forms_activate() {
     add_option("aform_current_css_file", "default.css");
   }
 
+  $a_form_forms_table = $wpdb->prefix . "a_form_forms";
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'multipage_sections'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD multipage_sections VARCHAR(1) DEFAULT 1";
+    $wpdb->query($sql); 
+  }
+  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'ga_category'");
+  if ($checkcol == 0) {
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_category VARCHAR(255)";
+    $wpdb->query($sql);
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_action VARCHAR(255)";
+    $wpdb->query($sql);  
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_label VARCHAR(255)";
+    $wpdb->query($sql); 
+    $sql = "ALTER TABLE $a_form_forms_table ADD ga_value VARCHAR(255)";
+    $wpdb->query($sql); 
+  }
+
 }
 register_activation_hook( __FILE__, 'a_forms_activate' );
 
@@ -193,24 +211,6 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
   register_setting( 'a-forms-settings-group', 'aforms_include_securimage' );
 
-  global $wpdb;
-  $a_form_forms_table = $wpdb->prefix . "a_form_forms";
-  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'multipage_sections'");
-  if ($checkcol == 0) {
-    $sql = "ALTER TABLE $a_form_forms_table ADD multipage_sections VARCHAR(1) DEFAULT 1";
-    $wpdb->query($sql); 
-  }
-  $checkcol = $wpdb->query("SHOW COLUMNS FROM '$a_form_forms_table' LIKE 'ga_category'");
-  if ($checkcol == 0) {
-    $sql = "ALTER TABLE $a_form_forms_table ADD ga_category VARCHAR(255)";
-    $wpdb->query($sql);
-    $sql = "ALTER TABLE $a_form_forms_table ADD ga_action VARCHAR(255)";
-    $wpdb->query($sql);  
-    $sql = "ALTER TABLE $a_form_forms_table ADD ga_label VARCHAR(255)";
-    $wpdb->query($sql); 
-    $sql = "ALTER TABLE $a_form_forms_table ADD ga_value VARCHAR(255)";
-    $wpdb->query($sql); 
-  }
 }
 
 function are_a_forms_dependencies_installed() {
