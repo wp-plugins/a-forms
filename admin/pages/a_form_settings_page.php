@@ -36,6 +36,16 @@ final class AdminAFormSettingsPage {
 		             />
 		          </td>
 		        </tr>
+
+		        <tr valign="top">
+		          <th scope="row">
+		            <label for="aforms_blockemails">Block email/domains:</label>
+		          </th>
+		          <td>
+		            <input type="text" id="aforms_blockemails" name="aforms_blockemails" value="<?php echo get_option('aforms_blockemails'); ?>" />
+		            <span class="example">Example @mail.ru, @mail.com, @google.com.</span>
+		          </td>
+		        </tr>
 		      </tbody>
 		    </table>
 

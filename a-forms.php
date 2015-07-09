@@ -18,7 +18,7 @@ http://wordpress.org/extend/plugins/a-forms
 
 4) Activate the plugin.
 
-Version: 2.4.1
+Version: 2.5.0
 Author: TheOnlineHero - Tom Skroza
 License: GPL2
 */
@@ -210,6 +210,7 @@ function register_a_forms_settings() {
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_username' );
   register_setting( 'a-forms-settings-group', 'a_forms_smtp_password' );
   register_setting( 'a-forms-settings-group', 'aforms_include_securimage' );
+  register_setting( 'a-forms-settings-group', 'aforms_blockemails' );
 
 }
 

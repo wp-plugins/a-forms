@@ -83,7 +83,29 @@ final class AFormController {
       $secure_algorithms["ssl"] = "ssl";
     }
 
-    $mail_message = AFormsTomM8::send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms);       
+    $mail_message = "<div class='success'>Message sent!</div>";
+
+
+    $safe = true;
+    $blocks = get_option("aforms_blockemails");
+    $blocks = str_replace(" ","", $blocks);
+    $blocks = str_replace(".","\.", $blocks);
+
+    $blocks_array = explode(",", $blocks);
+
+    foreach ($blocks_array as $b) {
+      if (preg_match("/".$b."/", $user_email)) {
+        $safe = false;
+      }
+    }
+
+    if ($safe) {
+      $mail_message = AFormsTomM8::send_email(false, get_option("a_forms_admin_email").", ".$form->to_email, $cc_emails, $form->to_bcc_email, $from_email, $from_name, $subject, $email_content, "", $GLOBALS["smtp_attachment_urls"], get_option("a_forms_smtp_auth"), get_option("a_forms_mail_host"), get_option("a_forms_smtp_port"), get_option("a_forms_smtp_username"), get_option("a_forms_smtp_password"), $secure_algorithms); 
+      // echo "SENT";
+    } else {
+      // echo "NOT SENT NOW";
+    }  
+      
     
     if ($mail_message == "<div class='success'>Message sent!</div>") {
 
@@ -91,7 +113,7 @@ final class AFormController {
         $mail_message = "<div class='success'>".$form->success_message."</div>";
       }
 
-      if ($form->tracking_enabled) {
+      if ($safe && $form->tracking_enabled) {
         AFormsTomM8::insert_record("a_form_tracks", array("created_at" => $current_datetime, "form_id" => $atts["id"], "content" => $email_content, "track_type" => "Successful Email", "referrer_url" => $_POST["a_form_referrer"], "fields_array" => serialize($field_values)));  
       }        
 
